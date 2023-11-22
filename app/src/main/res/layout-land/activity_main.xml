@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingDefaultResource">
+
+        <Button
+            android:id="@+id/btn_connect_server"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/grey_light"
+            android:text="@string/connect_server"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.4" />
+
+        <Button
+            android:id="@+id/btn_start_simulation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/grey_light"
+            android:text="@string/start_simulation"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/btn_connect_server"
+            app:layout_constraintStart_toStartOf="@+id/btn_connect_server"
+            app:layout_constraintTop_toBottomOf="@+id/btn_connect_server" />
+
+        <Button
+            android:id="@+id/btn_debug"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/grey_light"
+            android:text="@string/debug_mode"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/btn_start_simulation"
+            app:layout_constraintStart_toStartOf="@+id/btn_start_simulation"
+            app:layout_constraintTop_toBottomOf="@+id/btn_start_simulation" />
+
+        <Button
+            android:id="@+id/btn_disconnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/red_900"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:text="@string/disconnect"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="@+id/tv_connection_status"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@+id/tv_connection_status"
+            app:layout_constraintTop_toBottomOf="@+id/tv_connection_status" />
+
+        <TextView
+            android:id="@+id/tv_connection_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|end"
+            android:text="@string/device_no_connect"
+            app:layout_constraintBottom_toTopOf="@+id/btn_connect_server"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.1" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

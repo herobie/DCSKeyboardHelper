@@ -1,0 +1,44 @@
+package com.example.dcskeyboardhelper.model.bean;
+
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
+public class OperatePage {
+    @PrimaryKey(autoGenerate = true)
+    private long pageId;//页面在数据库中的id
+    @ColumnInfo
+    private long parentId;//页面所属存档配置的id
+    @ColumnInfo
+    private String pageName;//页面名称
+
+    public OperatePage(long parentId, String pageName) {
+        this.parentId = parentId;
+        this.pageName = pageName;
+    }
+
+    public long getPageId() {
+        return pageId;
+    }
+
+    public void setPageId(long pageId) {
+        this.pageId = pageId;
+    }
+
+    public long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(long parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getPageName() {
+        return pageName;
+    }
+
+    public void setPageName(String pageName) {
+        this.pageName = pageName;
+    }
+}

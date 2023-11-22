@@ -1,0 +1,66 @@
+<resources>
+    <string name="app_name">DCS Keyboard Helper</string>
+
+    <string name="connect_server">寻找服务端</string>
+    <string name="start_simulation">开始模拟</string>
+    <string name="debug_mode">调试模式</string>
+    <string name="disconnect">断开连接</string>
+
+    <string name="device_no_connect">服务端未连接</string>
+    <string name="device_connected">服务端已连接</string>
+    <string name="device_connecting">设备连接中</string>
+    <string name="connect_failed">连接失败</string>
+    <string name="device_disconnect">设备已断开</string>
+
+    <string name="input_server_ip">输入服务端ip地址</string>
+    <string name="input_port">输入端口</string>
+
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+
+    <string name="operate_success">操作成功</string>
+    <string name="operate_failed">操作失败</string>
+    <string name="warning">警告</string>
+    <string name="confirm_operate">真的要这么做吗？</string>
+
+    <string name="save_title">创建或读取配置</string>
+
+    <string name="profile_title_placeholder">F/A-18</string>
+    <string name="profile_desc_placeholder">F/A-18C大黄蜂操控面板</string>
+    <string name="profile_created_date_placeholder">2023–11–21</string>
+
+    <string name="input_profile_title">输入配置名称</string>
+    <string name="input_profile_desc">输入配置备注</string>
+
+    <string name="operate_panel">操作面板</string>
+    <string name="info">详情</string>
+    <string name="shortcut">快捷键</string>
+    <string name="reset">重置至默认值</string>
+    <string name="lock">锁定</string>
+    <string name="add_button">添加按钮</string>
+    <string name="save">保存</string>
+
+    <string name="previous">上一个</string>
+    <string name="next">下一个</string>
+
+    <string name="input_button_title">输入按钮名称</string>
+    <string name="input_button_desc">输入按钮模式描述</string>
+    <string name="input_button_step_sum">输入按钮执行步骤数量</string>
+    <string name="input_button_default_step">输入按钮默认步骤位置</string>
+    <string name="input_button_step_desc">输入步骤名</string>
+    <string name="input_button_height">输入按钮高度占格</string>
+    <string name="input_button_width">输入按钮宽度占格</string>
+    <string name="choose_button_switch_mode">选择按钮切换模式</string>
+    <string name="choose_button_add_info">将此按钮信息加入左侧信息框</string>
+
+    <string name="loop">循环</string>
+    <string name="step">步进</string>
+    
+    <string name="action_step_placeholder">步骤1</string>
+    <string name="action_desc_placeholder">开</string>
+    <string name="action_placeholder">R_Alt</string>
+    
+    <string name="insert_button">添加按钮</string>
+    <string name="insert_page">添加页面</string>
+    <string name="page_name_placeholder">点击右上角添加按钮</string>
+</resources>
