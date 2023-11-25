@@ -1,5 +1,6 @@
 package com.example.dcskeyboardhelper.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -27,13 +28,20 @@ public class LoadActivity extends BaseActivity<ActivityLoadBinding, LoadViewMode
 
     @Override
     protected void initParams() {
+        Intent intent = getIntent();
+        String launchMode = intent.getStringExtra("launchMode");//获取是从哪打开的加载页面
+        if (launchMode == null){
+            finish();
+            return;
+        }
+
         setSupportActionBar(binding.tbSave);
         Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         binding.rvSave.setLayoutManager(layoutManager);
-        SaveAdapter saveAdapter = new SaveAdapter(this, viewModel);
+        SaveAdapter saveAdapter = new SaveAdapter(this, viewModel, launchMode);
         binding.rvSave.setAdapter(saveAdapter);
 
         viewModel.queryAll().observe(this, new Observer<List<Profile>>() {

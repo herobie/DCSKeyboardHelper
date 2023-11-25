@@ -38,6 +38,8 @@
     <string name="reset">重置至默认值</string>
     <string name="lock">锁定</string>
     <string name="add_button">添加按钮</string>
+    <string name="add_action">添加操作</string>
+    <string name="delete_page">删除页面</string>
     <string name="save">保存</string>
 
     <string name="previous">上一个</string>
@@ -59,8 +61,15 @@
     <string name="action_step_placeholder">步骤1</string>
     <string name="action_desc_placeholder">开</string>
     <string name="action_placeholder">R_Alt</string>
+    <string name="action_title_placeholder">自动驾驶</string>
     
     <string name="insert_button">添加按钮</string>
     <string name="insert_page">添加页面</string>
     <string name="page_name_placeholder">点击右上角添加按钮</string>
+
+    <string name="input_page_name">输入页面名称</string>
+
+    <string name="load_profile_error">读取存档时出现问题!</string>
+    <string name="page_index_error">页面指针错误，请退出当前页面重试!</string>
+    <string name="profile_index_error">配置指针出错，请返回主界面重试!</string>
 </resources>

@@ -19,4 +19,7 @@ public interface ProfileDao {
 
     @Query("DELETE FROM Profile WHERE id=:id")
     void deleteProfile(long id);//删除指定配置
+
+    @Query("SELECT * FROM Profile WHERE id =:id")
+    long getProfileById(long id);//根据id获取指定配置
 }

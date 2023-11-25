@@ -24,11 +24,11 @@ public class ActionModuleModel extends BaseModel {
         actionModuleDao = userDataBase.getActionModuleDao();
     }
 
-    public LiveData<List<ActionModule>> queryAllModules(){
+    public LiveData<List<ActionModule>> queryAllModules(long pageId){
         Future<LiveData<List<ActionModule>>> future = executorService.submit(new Callable<LiveData<List<ActionModule>>>() {
             @Override
             public LiveData<List<ActionModule>> call() throws Exception {
-                return actionModuleDao.queryAll();
+                return actionModuleDao.queryAll(pageId);
             }
         });
 
@@ -61,6 +61,15 @@ public class ActionModuleModel extends BaseModel {
             @Override
             public void run() {
                 actionModuleDao.deleteModule(id);
+            }
+        });
+    }
+
+    public void updateModule(ActionModule...module){
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                actionModuleDao.updateModule(module);
             }
         });
     }

@@ -11,6 +11,7 @@ import android.view.View;
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.BaseActivity;
 import com.example.dcskeyboardhelper.databinding.ActivityMainBinding;
+import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.socket.Client;
 import com.example.dcskeyboardhelper.ui.dialog.ConnectDialog;
 import com.example.dcskeyboardhelper.viewModel.MainViewModel;
@@ -61,10 +62,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 break;
             case R.id.btn_start_simulation:
                 Intent intent = new Intent(this, LoadActivity.class);
+                intent.putExtra("launchMode", Constant.SIMULATION_MODE);
                 startActivity(intent);
                 break;
             case R.id.btn_debug:
-                Intent i = new Intent(this, ModuleDebugActivity.class);
+                Intent i = new Intent(this, LoadActivity.class);
+                i.putExtra("launchMode", Constant.DEBUG_MODE);
                 startActivity(i);
                 break;
         }

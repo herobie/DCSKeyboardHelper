@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dcskeyboardhelper.R;
+import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.bean.Profile;
+import com.example.dcskeyboardhelper.ui.ModuleDebugActivity;
 import com.example.dcskeyboardhelper.ui.dialog.ProfileDialog;
 import com.example.dcskeyboardhelper.util.DateUtil;
 import com.example.dcskeyboardhelper.viewModel.LoadViewModel;
@@ -25,10 +29,12 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Profile> profiles;
     private Context context;
     private LoadViewModel viewModel;
+    private final String parentPage;//通过这个变量来获取是这是在调试模式还是开始模拟按钮中打开的
 
-    public SaveAdapter(Context context, LoadViewModel loadViewModel) {
+    public SaveAdapter(Context context, LoadViewModel loadViewModel, String parentPage) {
         this.context = context;
         this.viewModel = loadViewModel;
+        this.parentPage = parentPage;
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -59,6 +65,23 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     ProfileDialog profileDialog = new ProfileDialog(context, viewModel);
+                    profileDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            //如果添加成功，那么则自动跳转至新添加的配置的操作页面
+                            if (profileDialog.getNewProfileId() != -1){//返回-1代表添加失败或点击了取消添加按钮
+                                long profileId = profileDialog.getNewProfileId();//获取配置id并传给下一个页面
+                                if (Constant.SIMULATION_MODE.equals(parentPage)){
+                                    // TODO: 2023/11/25 跳转至模拟页面
+                                }else if (Constant.DEBUG_MODE.equals(parentPage)){
+                                    Intent intent = new Intent(context, ModuleDebugActivity.class);
+                                    intent.putExtra("profileId", profileId);
+                                    context.startActivity(intent);
+                                    Constant.currentProfileId = profileId;
+                                }
+                            }
+                        }
+                    });
                     profileDialog.show();
                 }
             });
@@ -70,6 +93,20 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     deleteItem(position);
+                }
+            });
+            ((ProfileVH) holder).cv_profile_background.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (Constant.SIMULATION_MODE.equals(parentPage)){
+                        // TODO: 2023/11/25 跳转至模拟页面
+                    }else if (Constant.DEBUG_MODE.equals(parentPage)){
+                        long profileId = viewModel.getProfileById(profiles.get(position).getId());
+                        Intent intent = new Intent(context, ModuleDebugActivity.class);
+                        intent.putExtra("profileId", profileId);
+                        context.startActivity(intent);
+                        Constant.currentProfileId = profileId;
+                    }
                 }
             });
         }
@@ -121,8 +158,10 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     static class ProfileVH extends RecyclerView.ViewHolder{
         private final TextView tv_profile_title, tv_profile_desc, tv_profile_date;
         private final ImageButton tv_profile_delete;
+        private final CardView cv_profile_background;
         public ProfileVH(@NonNull View itemView) {
             super(itemView);
+            cv_profile_background = itemView.findViewById(R.id.cv_profile_background);
             tv_profile_title = itemView.findViewById(R.id.tv_profile_title);
             tv_profile_desc = itemView.findViewById(R.id.tv_profile_desc);
             tv_profile_date = itemView.findViewById(R.id.tv_profile_date);

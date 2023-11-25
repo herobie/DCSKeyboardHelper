@@ -12,14 +12,14 @@ import java.util.List;
 
 @Dao
 public interface ActionModuleDao {
-    @Query("SELECT * FROM ActionModule ORDER BY id ASC")
-    LiveData<List<ActionModule>> queryAll();//获取全部
+    @Query("SELECT * FROM ActionModule WHERE pageId=:pageId ORDER BY id ASC")
+    LiveData<List<ActionModule>> queryAll(long pageId);//获取全部
 
     @Insert
     long insertModule(ActionModule module);
 
     @Update
-    void updateModule(ActionModule module);
+    void updateModule(ActionModule...module);
 
     @Query("DELETE FROM ActionModule WHERE id=:id")
     void deleteModule(long id);

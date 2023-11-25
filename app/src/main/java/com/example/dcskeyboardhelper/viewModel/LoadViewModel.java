@@ -29,4 +29,8 @@ public class LoadViewModel extends BaseViewModel<ProfileModel> {
     public void delete(long id){
         model.delete(id);
     }
+
+    public long getProfileById(long id){
+        return model.getProfileById(id);
+    }
 }

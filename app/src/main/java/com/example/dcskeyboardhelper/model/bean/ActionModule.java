@@ -42,11 +42,12 @@ public class ActionModule {
     private long profileId;//所属存档配置的id
     @ColumnInfo
     private int gridPosition;//在gridLayout中的位置
+    @Ignore
+    private int currentStep;//当前处于的步骤
 
-    public ActionModule(long id, String title, String desc, int heightWeight, int widthWeight,
+    public ActionModule(String title, String desc, int heightWeight, int widthWeight,
                         int stepsNum, int defaultStep, int switchMode, List<String> stepsDesc,
                         List<Integer> keyboardActions, boolean isStarred, long pageId, long profileId, int gridPosition) {
-        this.id = id;
         this.title = title;
         this.desc = desc;
         this.heightWeight = heightWeight;
@@ -60,6 +61,7 @@ public class ActionModule {
         this.pageId = pageId;
         this.profileId = profileId;
         this.gridPosition = gridPosition;
+        currentStep = defaultStep;
     }
 
     @Ignore
@@ -80,6 +82,7 @@ public class ActionModule {
         isStarred = false;
         switchMode = Constant.LOOP;
         defaultStep = 0;
+        currentStep = defaultStep;
     }
 
     //设置该模块的尺寸宽高
@@ -198,5 +201,13 @@ public class ActionModule {
 
     public void setGridPosition(int gridPosition) {
         this.gridPosition = gridPosition;
+    }
+
+    public int getCurrentStep() {
+        return currentStep;
+    }
+
+    public void setCurrentStep(int currentStep) {
+        this.currentStep = currentStep;
     }
 }

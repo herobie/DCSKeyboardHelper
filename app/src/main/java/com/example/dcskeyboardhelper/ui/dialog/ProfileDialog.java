@@ -17,6 +17,7 @@ import java.util.Objects;
 
 public class ProfileDialog extends BaseDialog<DialogInsertProfileBinding> {
     private LoadViewModel viewModel;
+    private long newProfileId = -1;
     public ProfileDialog(@NonNull Context context, LoadViewModel viewModel) {
         super(context);
         this.viewModel = viewModel;
@@ -39,12 +40,16 @@ public class ProfileDialog extends BaseDialog<DialogInsertProfileBinding> {
                 String title = Objects.requireNonNull(binding.edProfileTitle.getEditText()).getText().toString();
                 String desc = Objects.requireNonNull(binding.edProfileDesc.getEditText()).getText().toString();
                 long createdDate = System.currentTimeMillis();
-                viewModel.insert(new Profile(title, desc, createdDate));
+                newProfileId = viewModel.insert(new Profile(title, desc, createdDate));
                 // TODO: 2023/11/21 操作失败 
                 Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         });
+    }
+
+    public long getNewProfileId() {
+        return newProfileId;
     }
 
     @Override

@@ -63,4 +63,20 @@ public class ProfileModel extends BaseModel {
             }
         });
     }
+
+    public long getProfileById(long id){
+        Future<Long> future = executorService.submit(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                return profileDao.getProfileById(id);
+            }
+        });
+
+        try {
+            return future.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }

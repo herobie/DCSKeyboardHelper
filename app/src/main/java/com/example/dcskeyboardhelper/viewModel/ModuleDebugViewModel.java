@@ -3,39 +3,43 @@ package com.example.dcskeyboardhelper.viewModel;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.dcskeyboardhelper.model.ActionModuleModel;
 import com.example.dcskeyboardhelper.model.OperatePageModel;
+import com.example.dcskeyboardhelper.model.adapter.FragmentsAdapter;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
+import com.example.dcskeyboardhelper.ui.debug.OperatePageFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ModuleDebugViewModel extends AndroidViewModel {
-    private OperatePageModel pageModel;
+    private long profileId;
+    private final OperatePageModel pageModel;
     private ActionModuleModel actionModuleModel;
-    private List<Fragment> pages, modules;
     private FragmentManager fragmentManager;
-    private List<OperatePage> operatePages;
+    private FragmentsAdapter<OperatePageFragment> operatePageAdapter;
+    private OperatePage currentPage;
+    private MutableLiveData<List<String>> statusDisplayed;//保存左侧support页面的文字
     public ModuleDebugViewModel(@NonNull Application application) {
         super(application);
         pageModel = new OperatePageModel(application);
         actionModuleModel = new ActionModuleModel(application);
+        statusDisplayed = new MutableLiveData<>();
+        statusDisplayed.postValue(new ArrayList<>());
+    }
+
+    public long insertModule(ActionModule module){
+        return actionModuleModel.insertModule(module);
     }
 
     public LiveData<List<OperatePage>> getAllOperatePageLiveData(){
         return pageModel.getOperatePageLiveData();
-    }
-
-    public List<OperatePage> getOperatePages() {
-        if (operatePages == null){
-            operatePages = pageModel.getOperatePage();
-        }
-        return operatePages;
     }
 
     public long insertPage(OperatePage page){
@@ -46,34 +50,6 @@ public class ModuleDebugViewModel extends AndroidViewModel {
         pageModel.deletePage(id);
     }
 
-    public LiveData<List<ActionModule>> getAllModules(){
-        return actionModuleModel.queryAllModules();
-    }
-
-    public long insertModule(ActionModule module){
-        return actionModuleModel.insertModule(module);
-    }
-
-    public void deleteModule(long id){
-        actionModuleModel.deleteModule(id);
-    }
-
-    public List<Fragment> getPages() {
-        return pages;
-    }
-
-    public void setPages(List<Fragment> pages) {
-        this.pages = pages;
-    }
-
-    public List<Fragment> getModules() {
-        return modules;
-    }
-
-    public void setModules(List<Fragment> modules) {
-        this.modules = modules;
-    }
-
     public FragmentManager getFragmentManager() {
         return fragmentManager;
     }
@@ -82,7 +58,31 @@ public class ModuleDebugViewModel extends AndroidViewModel {
         this.fragmentManager = fragmentManager;
     }
 
-    public void setOperatePages(List<OperatePage> operatePages) {
-        this.operatePages = operatePages;
+    public FragmentsAdapter<OperatePageFragment> getOperatePageAdapter() {
+        return operatePageAdapter;
+    }
+
+    public void setOperatePageAdapter(FragmentsAdapter<OperatePageFragment> operatePageAdapter) {
+        this.operatePageAdapter = operatePageAdapter;
+    }
+
+    public OperatePage getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(OperatePage currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public void setProfileId(long profileId) {
+        this.profileId = profileId;
+    }
+
+    public long getProfileId() {
+        return profileId;
+    }
+
+    public MutableLiveData<List<String>> getStatusDisplayed() {
+        return statusDisplayed;
     }
 }

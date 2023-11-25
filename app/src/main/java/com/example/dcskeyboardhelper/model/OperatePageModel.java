@@ -76,7 +76,7 @@ public class OperatePageModel extends BaseModel {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-
+                operatePageDao.deletePage(id);
             }
         });
     }

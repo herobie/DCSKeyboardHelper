@@ -21,5 +21,6 @@ public interface OperatePageDao {
     @Insert
     long insertPage(OperatePage page);
 
-
+    @Query("DELETE FROM OperatePage WHERE pageId=:id")
+    void deletePage(long id);
 }
