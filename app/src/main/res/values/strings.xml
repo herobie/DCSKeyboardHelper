@@ -22,6 +22,7 @@
     <string name="operate_failed">操作失败</string>
     <string name="warning">警告</string>
     <string name="confirm_operate">真的要这么做吗？</string>
+    <string name="onClick">被点击!</string>
 
     <string name="save_title">创建或读取配置</string>
 
@@ -54,11 +55,16 @@
     <string name="input_button_width">输入按钮宽度占格</string>
     <string name="choose_button_switch_mode">选择按钮切换模式</string>
     <string name="choose_button_add_info">将此按钮信息加入左侧信息框</string>
+    <string name="input_keyboard_action">输入模拟动作</string>
+    <string name="set_keyboard_action">录入按键动作</string>
+    <string name="waiting_for_input">等待输入…</string>
+    <string name="choose_key">选择要模拟的按键</string>
 
     <string name="loop">循环</string>
     <string name="step">步进</string>
     
     <string name="action_step_placeholder">步骤1</string>
+    <string name="action_step_placeholder_no_number">步骤</string>
     <string name="action_desc_placeholder">开</string>
     <string name="action_placeholder">R_Alt</string>
     <string name="action_title_placeholder">自动驾驶</string>

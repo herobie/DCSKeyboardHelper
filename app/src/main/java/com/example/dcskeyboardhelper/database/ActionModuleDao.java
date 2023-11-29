@@ -23,4 +23,7 @@ public interface ActionModuleDao {
 
     @Query("DELETE FROM ActionModule WHERE id=:id")
     void deleteModule(long id);
+
+    @Query("SELECT * FROM ActionModule WHERE isStarred=1")
+    List<ActionModule> getStarredModule();//获取星标module
 }

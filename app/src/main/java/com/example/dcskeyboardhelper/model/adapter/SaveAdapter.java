@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.bean.Profile;
-import com.example.dcskeyboardhelper.ui.ModuleDebugActivity;
+import com.example.dcskeyboardhelper.ui.debug.ModuleDebugActivity;
 import com.example.dcskeyboardhelper.ui.dialog.ProfileDialog;
 import com.example.dcskeyboardhelper.util.DateUtil;
 import com.example.dcskeyboardhelper.viewModel.LoadViewModel;

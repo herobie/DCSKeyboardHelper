@@ -1,7 +1,6 @@
-package com.example.dcskeyboardhelper.ui;
+package com.example.dcskeyboardhelper.ui.debug;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.Menu;
@@ -12,6 +11,7 @@ import android.widget.ListPopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,7 +23,6 @@ import com.example.dcskeyboardhelper.databinding.ActivitySimulateBinding;
 import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.adapter.FragmentsAdapter;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
-import com.example.dcskeyboardhelper.ui.debug.OperatePageFragment;
 import com.example.dcskeyboardhelper.ui.dialog.ModuleInsertDialog;
 import com.example.dcskeyboardhelper.ui.dialog.PageDialog;
 import com.example.dcskeyboardhelper.util.PopupWindowUtil;
@@ -33,7 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, ModuleDebugViewModel> {
+public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, ModuleDebugViewModel>
+        implements View.OnClickListener {
     @Override
     protected void initParams() {
         Intent intent = getIntent();
@@ -50,8 +50,11 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
         Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        binding.ibNext.setOnClickListener(this);
+        binding.ibPrev.setOnClickListener(this);
+
         viewModel.setFragmentManager(getSupportFragmentManager());
-        viewModel.setOperatePageAdapter(new FragmentsAdapter<OperatePageFragment>(viewModel.getFragmentManager(),
+        viewModel.setOperatePageAdapter(new FragmentsAdapter<OperatePageDebugFragment>(viewModel.getFragmentManager(),
                 getLifecycle(), null));
 
         //监控OperatePage类
@@ -63,9 +66,9 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                 }
                 //如果operatePage有数据，那么new对应数量的fragment出来，并给adapter设置数据源
                 if (operatePages != null){
-                    List<OperatePageFragment> fragments = new ArrayList<>();
+                    List<OperatePageDebugFragment> fragments = new ArrayList<>();
                     for (OperatePage page : operatePages){
-                        fragments.add(new OperatePageFragment(viewModel, page));
+                        fragments.add(new OperatePageDebugFragment(viewModel, page));
                     }
                     viewModel.getOperatePageAdapter().setFragments(fragments);
                     binding.vpTac.setAdapter(viewModel.getOperatePageAdapter());
@@ -79,11 +82,12 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                OperatePageFragment operatePageFragment = viewModel.getOperatePageAdapter().getFragments().get(position);
-                if (!operatePageFragment.isHidden()){//这里怕出问题，必须是当前显示的fragment才行
-                    Constant.currentPageId = operatePageFragment.getOperatePage().getPageId();
-                    viewModel.setCurrentPage(operatePageFragment.getOperatePage());
-                    binding.tbSim.setTitle(operatePageFragment.getOperatePage().getPageName());
+                OperatePageDebugFragment operatePageDebugFragment = viewModel.getOperatePageAdapter()
+                        .getFragments().get(position);
+                if (!operatePageDebugFragment.isHidden()){//这里怕出问题，必须是当前显示的fragment才行
+                    Constant.currentPageId = operatePageDebugFragment.getOperatePage().getPageId();
+                    viewModel.setCurrentPage(operatePageDebugFragment.getOperatePage());
+                    binding.tbSim.setTitle(operatePageDebugFragment.getOperatePage().getPageName());
                 }
                 if (Objects.requireNonNull(binding.vpTac.getAdapter()).getItemCount() <= 0){//如果没有任何页面则toolbar显示默认标题
                     binding.tbSim.setTitle(R.string.operate_panel);
@@ -91,6 +95,11 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                 }
             }
         });
+
+        List<Fragment> supportFragments = new ArrayList<>();
+        supportFragments.add(new SupportDebugFragment(viewModel));
+        binding.vpSupport.setAdapter(new FragmentsAdapter(viewModel.getFragmentManager(), getLifecycle(), supportFragments));
+
     }
 
     @Override
@@ -178,5 +187,23 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_debug, menu);
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.ib_prev:
+                int currentPosition = binding.vpTac.getCurrentItem();
+                if (currentPosition > 0){
+                    binding.vpTac.setCurrentItem(currentPosition - 1);
+                }
+                break;
+            case R.id.ib_next:
+                currentPosition = binding.vpTac.getCurrentItem();
+                if (currentPosition < Objects.requireNonNull(binding.vpTac.getAdapter()).getItemCount() - 1){
+                    binding.vpTac.setCurrentItem(currentPosition + 1);
+                }
+                break;
+        }
     }
 }

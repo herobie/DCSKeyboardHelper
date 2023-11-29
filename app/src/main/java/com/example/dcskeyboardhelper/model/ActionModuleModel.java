@@ -8,7 +8,9 @@ import com.example.dcskeyboardhelper.base.BaseModel;
 import com.example.dcskeyboardhelper.database.ActionModuleDao;
 import com.example.dcskeyboardhelper.database.UserDatabase;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
+import com.example.dcskeyboardhelper.model.bean.SupportItemData;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -72,5 +74,30 @@ public class ActionModuleModel extends BaseModel {
                 actionModuleDao.updateModule(module);
             }
         });
+    }
+
+    public List<ActionModule> getStarredModule(){
+        Future<List<ActionModule>> future = executorService.submit(new Callable<List<ActionModule>>() {
+            @Override
+            public List<ActionModule> call() throws Exception {
+                return actionModuleDao.getStarredModule();
+            }
+        });
+
+        try {
+            return future.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<SupportItemData> getSupportData(){
+        List<SupportItemData> list = new ArrayList<>();
+        for (ActionModule module : getStarredModule()){
+            SupportItemData supportItemData = new SupportItemData(module.getId(), module.getDesc(), module.getStepsDesc());
+            list.add(supportItemData);
+        }
+        return list;
     }
 }

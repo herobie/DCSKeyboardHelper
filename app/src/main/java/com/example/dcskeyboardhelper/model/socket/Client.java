@@ -54,6 +54,11 @@ public class Client {
                     }else {
                         connectionStatus.postValue(SERVER_CONNECT_FAILED);
                     }
+                    try {
+                        debug();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.w("MainActivity", "init: 连接超时");

@@ -44,6 +44,8 @@ public class ActionModule {
     private int gridPosition;//在gridLayout中的位置
     @Ignore
     private int currentStep;//当前处于的步骤
+    @Ignore
+    private boolean isReverse;//步进操作时，判断是增加步骤还是减少步骤
 
     public ActionModule(String title, String desc, int heightWeight, int widthWeight,
                         int stepsNum, int defaultStep, int switchMode, List<String> stepsDesc,
@@ -89,6 +91,25 @@ public class ActionModule {
     public void setModuleScale(int w, int h){
         this.widthWeight = w;
         this.heightWeight = h;
+    }
+
+    public void updateModule(String title, String desc, int heightWeight, int widthWeight,
+                        int stepsNum, int defaultStep, int switchMode, List<String> stepsDesc,
+                        List<Integer> keyboardActions, boolean isStarred, long pageId, long profileId, int gridPosition) {
+        this.title = title;
+        this.desc = desc;
+        this.heightWeight = heightWeight;
+        this.widthWeight = widthWeight;
+        this.stepsNum = stepsNum;
+        this.defaultStep = defaultStep;
+        this.switchMode = switchMode;
+        this.stepsDesc = stepsDesc;
+        this.keyboardActions = keyboardActions;
+        this.isStarred = isStarred;
+        this.pageId = pageId;
+        this.profileId = profileId;
+        this.gridPosition = gridPosition;
+        currentStep = defaultStep;
     }
 
     public long getId() {
@@ -209,5 +230,13 @@ public class ActionModule {
 
     public void setCurrentStep(int currentStep) {
         this.currentStep = currentStep;
+    }
+
+    public boolean isReverse() {
+        return isReverse;
+    }
+
+    public void setReverse(boolean reverse) {
+        isReverse = reverse;
     }
 }

@@ -13,7 +13,9 @@ import com.example.dcskeyboardhelper.model.OperatePageModel;
 import com.example.dcskeyboardhelper.model.adapter.FragmentsAdapter;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
-import com.example.dcskeyboardhelper.ui.debug.OperatePageFragment;
+import com.example.dcskeyboardhelper.model.bean.SupportItemData;
+import com.example.dcskeyboardhelper.ui.debug.OperatePageDebugFragment;
+import com.example.dcskeyboardhelper.ui.debug.SupportDebugFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +25,15 @@ public class ModuleDebugViewModel extends AndroidViewModel {
     private final OperatePageModel pageModel;
     private ActionModuleModel actionModuleModel;
     private FragmentManager fragmentManager;
-    private FragmentsAdapter<OperatePageFragment> operatePageAdapter;
+    private FragmentsAdapter<OperatePageDebugFragment> operatePageAdapter;
     private OperatePage currentPage;
-    private MutableLiveData<List<String>> statusDisplayed;//保存左侧support页面的文字
+    private MutableLiveData<List<SupportItemData>> statusDisplayed;//保存左侧support页面的文字
     public ModuleDebugViewModel(@NonNull Application application) {
         super(application);
         pageModel = new OperatePageModel(application);
         actionModuleModel = new ActionModuleModel(application);
         statusDisplayed = new MutableLiveData<>();
-        statusDisplayed.postValue(new ArrayList<>());
+        statusDisplayed.postValue(getSupportData());
     }
 
     public long insertModule(ActionModule module){
@@ -58,11 +60,11 @@ public class ModuleDebugViewModel extends AndroidViewModel {
         this.fragmentManager = fragmentManager;
     }
 
-    public FragmentsAdapter<OperatePageFragment> getOperatePageAdapter() {
+    public FragmentsAdapter<OperatePageDebugFragment> getOperatePageAdapter() {
         return operatePageAdapter;
     }
 
-    public void setOperatePageAdapter(FragmentsAdapter<OperatePageFragment> operatePageAdapter) {
+    public void setOperatePageAdapter(FragmentsAdapter<OperatePageDebugFragment> operatePageAdapter) {
         this.operatePageAdapter = operatePageAdapter;
     }
 
@@ -82,7 +84,11 @@ public class ModuleDebugViewModel extends AndroidViewModel {
         return profileId;
     }
 
-    public MutableLiveData<List<String>> getStatusDisplayed() {
+    public List<SupportItemData> getSupportData(){
+        return actionModuleModel.getSupportData();
+    }
+
+    public MutableLiveData<List<SupportItemData>> getStatusDisplayed() {
         return statusDisplayed;
     }
 }

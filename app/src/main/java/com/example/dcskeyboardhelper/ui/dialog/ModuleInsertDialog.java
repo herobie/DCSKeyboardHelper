@@ -6,18 +6,23 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.BaseDialog;
 import com.example.dcskeyboardhelper.databinding.DialogInsertActionModuleBinding;
 import com.example.dcskeyboardhelper.model.Constant;
+import com.example.dcskeyboardhelper.model.adapter.KeyboardActionsAdapter;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
 import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 
 import java.util.Objects;
 
+//添加按键的dialog
 public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBinding> implements View.OnClickListener{
     private ModuleDebugViewModel viewModel;
+    private KeyboardActionsAdapter adapter;
     public ModuleInsertDialog(@NonNull Context context, ModuleDebugViewModel viewModel) {
         super(context);
         this.viewModel = viewModel;
@@ -29,6 +34,11 @@ public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBindi
         binding.btnInsertCancel.setOnClickListener(this);
         binding.btnInsertConfirm.setOnClickListener(this);
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
+        binding.rvInsertAction.setLayoutManager(layoutManager);
+        adapter = new KeyboardActionsAdapter(getContext());
+        binding.rvInsertAction.setAdapter(adapter);
     }
 
     @Override
@@ -47,10 +57,8 @@ public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBindi
                     .getEditText()).getText().toString());
             int defaultStep = Integer.parseInt(Objects.requireNonNull(binding.edButtonDefaultStep
                     .getEditText()).getText().toString());
-            int width = Integer.parseInt(Objects.requireNonNull(binding.edButtonWidth
-                    .getEditText()).getText().toString());
-            int height = Integer.parseInt(Objects.requireNonNull(binding.edButtonHeight
-                    .getEditText()).getText().toString());
+            int width = 1;
+            int height = 1;
             int switchMode = Constant.LOOP;
             if (binding.rbStep.isChecked()){//切换模式选中的步进
                 switchMode = Constant.STEP;
@@ -70,7 +78,8 @@ public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBindi
                 return;
             }
             ActionModule module = new ActionModule(title, desc, height, width, stepSum,
-                    defaultStep, switchMode, null, null, isStarred, pageId, profileId, 0);
+                    defaultStep, switchMode, adapter.getStepsDesc(), adapter.getKeyboardActions(),
+                    isStarred, pageId, profileId, 0);
             viewModel.insertModule(module);
             Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
             dismiss();
