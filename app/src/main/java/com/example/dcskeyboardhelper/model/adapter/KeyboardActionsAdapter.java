@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.SuperBaseAdapter;
 import com.example.dcskeyboardhelper.databinding.ItemInsertActionBinding;
+import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.bean.Key;
+import com.example.dcskeyboardhelper.model.socket.KeyCodes;
 import com.example.dcskeyboardhelper.ui.dialog.SetKeyboardActionDialog;
 
 import java.util.ArrayList;
@@ -42,24 +44,48 @@ public class KeyboardActionsAdapter extends SuperBaseAdapter<ItemInsertActionBin
         binding.ibInsertAb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SetKeyboardActionDialog keyboardActionDialog = new SetKeyboardActionDialog(context);
+                SetKeyboardActionDialog keyboardActionDialog;
+                if (keyboardActions.isEmpty() || position >= keyboardActions.size()){
+                    keyboardActionDialog = new SetKeyboardActionDialog(context);
+                }else {
+                    String name = KeyCodes.getKeyNameByValue(keyboardActions.get(position));
+                    Key key = new Key(name, keyboardActions.get(position));
+                    keyboardActionDialog = new SetKeyboardActionDialog(context, key, stepsDesc.get(position));
+                }
+
                 keyboardActionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-                        //获取步骤名及所要模拟的按键Code
-                        Key key = keyboardActionDialog.getKey();
-                        if (key == null){//判空，如果为空则表明不是按确认键退出的，直接return
-                            return;
-                        }else {
-                            keyboardActions.add(key.getCode());
-                            binding.tvAction.setText(key.getName());
+                        //获取dialog的创建状态，是更新还是创建
+                        String status = keyboardActionDialog.getDialog_status();
+                        if (Constant.CREATE.equals(status)){
+                            //获取步骤名及所要模拟的按键Code
+                            Key key = keyboardActionDialog.getKey();
+                            if (key == null){//判空，如果为空则表明不是按确认键退出的，直接return
+                                return;
+                            }else {
+                                keyboardActions.add(key.getCode());
+//                                binding.tvAction.setText(key.getName());
+                            }
+                            String desc = keyboardActionDialog.getStepDesc();
+                            if (desc != null && stepsDesc != null){
+//                                binding.tvActionDesc.setText(desc);
+                            }
+                            stepsDesc.add(desc);
+                            notifyDataSetChanged();// TODO: 2023/11/30 更高效的刷新方式
+                        }else if (Constant.UPDATE.equals(status)){
+                            Key key = keyboardActionDialog.getKey();
+                            if (key == null){
+                                return;
+                            }
+                            keyboardActions.set(position, key.getCode());
+//                            binding.tvAction.setText(key.getName());
+                            String desc = keyboardActionDialog.getStepDesc();
+//                            binding.tvActionDesc.setText(desc);
+                            stepsDesc.set(position, desc);
+                            notifyItemChanged(position);
                         }
-                        String desc = keyboardActionDialog.getStepDesc();
-                        if (desc != null && stepsDesc != null){
-                            binding.tvActionDesc.setText(desc);
-                        }
-                        stepsDesc.add(desc);
-                        notifyItemChanged(keyboardActions.size() - 1);
+
                     }
                 });
                 keyboardActionDialog.show();
@@ -90,6 +116,8 @@ public class KeyboardActionsAdapter extends SuperBaseAdapter<ItemInsertActionBin
 
         if (isKeyboardSet){
             binding.tvInsertStep.setText(context.getString(R.string.action_step_placeholder_no_number) + (1 + position));
+            binding.tvActionDesc.setText(stepsDesc.get(position));
+            binding.tvAction.setText(KeyCodes.getKeyNameByValue(keyboardActions.get(position)));
         }
     }
 

@@ -67,6 +67,15 @@ public class ActionModuleModel extends BaseModel {
         });
     }
 
+    public void deleteModuleInPage(long pageId){
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                actionModuleDao.deleteModuleInPage(pageId);
+            }
+        });
+    }
+
     public void updateModule(ActionModule...module){
         executorService.submit(new Runnable() {
             @Override

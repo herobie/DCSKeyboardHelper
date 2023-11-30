@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dcskeyboardhelper.R;
+import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.adapter.KeysAdapter;
 import com.example.dcskeyboardhelper.model.bean.Key;
 import com.google.android.flexbox.FlexboxLayoutManager;
@@ -28,14 +29,17 @@ public class SetKeyboardActionDialog extends Dialog implements KeysAdapter.KeySe
     private Key key;
     private String desc;
     private boolean isConfirm = false;//用于标记是否是按确认键退出Dialog的
+    private final String dialog_status;
     public SetKeyboardActionDialog(@NonNull Context context) {
         super(context, R.style.DialogBaseStyle);
+        dialog_status = Constant.CREATE;
     }
 
     public SetKeyboardActionDialog(@NonNull Context context, Key key, String desc) {
         super(context);
         this.key = key;
         this.desc = desc;
+        dialog_status = Constant.UPDATE;
     }
 
     @Override
@@ -79,5 +83,9 @@ public class SetKeyboardActionDialog extends Dialog implements KeysAdapter.KeySe
 
     public Key getKey() {
         return isConfirm? key : null;//只有按确认键才能获取key
+    }
+
+    public String getDialog_status() {
+        return dialog_status;
     }
 }

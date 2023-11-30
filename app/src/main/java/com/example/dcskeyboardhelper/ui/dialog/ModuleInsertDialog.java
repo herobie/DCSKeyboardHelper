@@ -57,8 +57,6 @@ public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBindi
                     .getEditText()).getText().toString());
             int defaultStep = Integer.parseInt(Objects.requireNonNull(binding.edButtonDefaultStep
                     .getEditText()).getText().toString());
-            int width = 1;
-            int height = 1;
             int switchMode = Constant.LOOP;
             if (binding.rbStep.isChecked()){//切换模式选中的步进
                 switchMode = Constant.STEP;
@@ -77,8 +75,8 @@ public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBindi
                 dismiss();
                 return;
             }
-            ActionModule module = new ActionModule(title, desc, height, width, stepSum,
-                    defaultStep, switchMode, adapter.getStepsDesc(), adapter.getKeyboardActions(),
+            ActionModule module = new ActionModule(title, desc,  stepSum, defaultStep, switchMode,
+                    adapter.getStepsDesc(), adapter.getKeyboardActions(),
                     isStarred, pageId, profileId, 0);
             viewModel.insertModule(module);
             Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();

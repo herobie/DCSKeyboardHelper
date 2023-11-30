@@ -192,4 +192,20 @@ public class KeyCodes {
         return keys;
     }
 
+    //根据KeyCode查找变量名
+    public static String getKeyNameByValue(int code){
+        try {
+            Class clazz = Class.forName("com.example.dcskeyboardhelper.model.socket.KeyCodes");
+            Field[] fields = clazz.getFields();//反射获取变量名及其值
+            for (Field field : fields){
+                if (field.getInt(0) == code){
+                    return field.getName();
+                }
+            }
+        } catch (ClassNotFoundException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

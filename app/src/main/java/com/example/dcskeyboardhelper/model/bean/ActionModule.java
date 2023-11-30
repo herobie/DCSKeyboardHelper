@@ -21,10 +21,6 @@ public class ActionModule {
     @ColumnInfo
     private String desc;//信息栏上面的状态，如（自动驾驶：）
     @ColumnInfo
-    private int heightWeight;//按钮的高度所占gridLayout的格子数
-    @ColumnInfo
-    private int widthWeight;//宽度占的格子数
-    @ColumnInfo
     private int stepsNum;//步骤总数
     @ColumnInfo
     private int defaultStep;//程序开始时按钮处于的步骤位置
@@ -47,13 +43,10 @@ public class ActionModule {
     @Ignore
     private boolean isReverse;//步进操作时，判断是增加步骤还是减少步骤
 
-    public ActionModule(String title, String desc, int heightWeight, int widthWeight,
-                        int stepsNum, int defaultStep, int switchMode, List<String> stepsDesc,
+    public ActionModule(String title, String desc, int stepsNum, int defaultStep, int switchMode, List<String> stepsDesc,
                         List<Integer> keyboardActions, boolean isStarred, long pageId, long profileId, int gridPosition) {
         this.title = title;
         this.desc = desc;
-        this.heightWeight = heightWeight;
-        this.widthWeight = widthWeight;
         this.stepsNum = stepsNum;
         this.defaultStep = defaultStep;
         this.switchMode = switchMode;
@@ -80,26 +73,16 @@ public class ActionModule {
 
     //未填写的参数使用默认值
     private void useDefaultAttr(){
-        setModuleScale(1,1);
         isStarred = false;
         switchMode = Constant.LOOP;
         defaultStep = 0;
         currentStep = defaultStep;
     }
 
-    //设置该模块的尺寸宽高
-    public void setModuleScale(int w, int h){
-        this.widthWeight = w;
-        this.heightWeight = h;
-    }
-
-    public void updateModule(String title, String desc, int heightWeight, int widthWeight,
-                        int stepsNum, int defaultStep, int switchMode, List<String> stepsDesc,
+    public void updateModule(String title, String desc, int stepsNum, int defaultStep, int switchMode, List<String> stepsDesc,
                         List<Integer> keyboardActions, boolean isStarred, long pageId, long profileId, int gridPosition) {
         this.title = title;
         this.desc = desc;
-        this.heightWeight = heightWeight;
-        this.widthWeight = widthWeight;
         this.stepsNum = stepsNum;
         this.defaultStep = defaultStep;
         this.switchMode = switchMode;
@@ -134,22 +117,6 @@ public class ActionModule {
 
     public void setDesc(String desc) {
         this.desc = desc;
-    }
-
-    public int getHeightWeight() {
-        return heightWeight;
-    }
-
-    public void setHeightWeight(int heightWeight) {
-        this.heightWeight = heightWeight;
-    }
-
-    public int getWidthWeight() {
-        return widthWeight;
-    }
-
-    public void setWidthWeight(int widthWeight) {
-        this.widthWeight = widthWeight;
     }
 
     public int getStepsNum() {

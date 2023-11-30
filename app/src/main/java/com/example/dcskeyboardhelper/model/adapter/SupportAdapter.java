@@ -32,7 +32,7 @@ public class SupportAdapter extends SuperBaseAdapter<ItemSupportBinding> {
             binding.tvSupportTitle.setText(status.get(position).getTitle());
             int currentStep = status.get(position).getCurrentStep();
             List<String> stepDesc = status.get(position).getStepDesc();
-            if (stepDesc != null){
+            if (stepDesc != null && !stepDesc.isEmpty()){
                 binding.tvSupportStatus.setText(stepDesc.get(currentStep));
             }
         }

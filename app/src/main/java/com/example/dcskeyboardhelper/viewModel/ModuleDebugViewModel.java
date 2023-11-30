@@ -49,7 +49,8 @@ public class ModuleDebugViewModel extends AndroidViewModel {
     }
 
     public void deletePage(long id){
-        pageModel.deletePage(id);
+        pageModel.deletePage(id);//先执行删除页面
+        actionModuleModel.deleteModuleInPage(id);//再把页面下所有的模块也删除了
     }
 
     public FragmentManager getFragmentManager() {
