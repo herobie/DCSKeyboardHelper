@@ -7,12 +7,11 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.dcskeyboardhelper.model.Constant;
-import com.example.dcskeyboardhelper.util.IntegerConverter;
-import com.example.dcskeyboardhelper.util.StringConverter;
+import com.example.dcskeyboardhelper.util.KeyConverter;
 
 import java.util.List;
 @Entity
-@TypeConverters({StringConverter.class, IntegerConverter.class})
+@TypeConverters({KeyConverter.class})
 public class ActionModule {
     @PrimaryKey(autoGenerate = true)
     private long id;//按钮的数据库id
@@ -27,9 +26,7 @@ public class ActionModule {
     @ColumnInfo
     private int switchMode;//切换模式（循环或步增）
     @ColumnInfo
-    private List<String> stepsDesc;//各步骤的描述，如（自动驾驶：开）中的“开”“关”
-    @ColumnInfo
-    private List<Integer> keyboardActions;//与该按钮绑定的按键
+    private List<Action> actions;//模拟按键操作
     @ColumnInfo
     private boolean isStarred;//是否被选中加入左侧信息框
     @ColumnInfo
@@ -43,29 +40,29 @@ public class ActionModule {
     @Ignore
     private boolean isReverse;//步进操作时，判断是增加步骤还是减少步骤
 
-    public ActionModule(String title, String desc, int stepsNum, int defaultStep, int switchMode, List<String> stepsDesc,
-                        List<Integer> keyboardActions, boolean isStarred, long pageId, long profileId, int gridPosition) {
+    public ActionModule(String title, String desc, int stepsNum, int defaultStep, int switchMode, List<Action> actions,
+                        boolean isStarred, long pageId, long profileId, int gridPosition) {
         this.title = title;
         this.desc = desc;
         this.stepsNum = stepsNum;
         this.defaultStep = defaultStep;
         this.switchMode = switchMode;
-        this.stepsDesc = stepsDesc;
-        this.keyboardActions = keyboardActions;
+        this.actions = actions;
         this.isStarred = isStarred;
         this.pageId = pageId;
         this.profileId = profileId;
         this.gridPosition = gridPosition;
         currentStep = defaultStep;
+        isReverse = false;
     }
 
     @Ignore
     //需要填写的最基本的参数
-    public ActionModule(String title, String desc, int stepsNum,List<Integer> keyboardActions, long pageId, long profileId) {
+    public ActionModule(String title, String desc, int stepsNum, List<Action> actions, long pageId, long profileId) {
         this.title = title;
         this.desc = desc;
         this.stepsNum = stepsNum;
-        this.keyboardActions = keyboardActions;
+        this.actions = actions;
         this.pageId = pageId;
         this.profileId = profileId;
         useDefaultAttr();
@@ -74,25 +71,26 @@ public class ActionModule {
     //未填写的参数使用默认值
     private void useDefaultAttr(){
         isStarred = false;
+        isReverse = false;
         switchMode = Constant.LOOP;
         defaultStep = 0;
         currentStep = defaultStep;
     }
 
-    public void updateModule(String title, String desc, int stepsNum, int defaultStep, int switchMode, List<String> stepsDesc,
-                        List<Integer> keyboardActions, boolean isStarred, long pageId, long profileId, int gridPosition) {
+    public void updateModule(String title, String desc, int stepsNum, int defaultStep, int switchMode, List<Action> actions,
+                             boolean isStarred, long pageId, long profileId, int gridPosition) {
         this.title = title;
         this.desc = desc;
         this.stepsNum = stepsNum;
         this.defaultStep = defaultStep;
         this.switchMode = switchMode;
-        this.stepsDesc = stepsDesc;
-        this.keyboardActions = keyboardActions;
+        this.actions = actions;
         this.isStarred = isStarred;
         this.pageId = pageId;
         this.profileId = profileId;
         this.gridPosition = gridPosition;
         currentStep = defaultStep;
+        isReverse = false;
     }
 
     public long getId() {
@@ -143,20 +141,13 @@ public class ActionModule {
         this.switchMode = switchMode;
     }
 
-    public List<String> getStepsDesc() {
-        return stepsDesc;
+
+    public List<Action> getActions() {
+        return actions;
     }
 
-    public void setStepsDesc(List<String> stepsDesc) {
-        this.stepsDesc = stepsDesc;
-    }
-
-    public List<Integer> getKeyboardActions() {
-        return keyboardActions;
-    }
-
-    public void setKeyboardActions(List<Integer> keyboardActions) {
-        this.keyboardActions = keyboardActions;
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
     }
 
     public boolean isStarred() {

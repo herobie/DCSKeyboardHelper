@@ -104,7 +104,7 @@ public class ActionModuleModel extends BaseModel {
     public List<SupportItemData> getSupportData(){
         List<SupportItemData> list = new ArrayList<>();
         for (ActionModule module : getStarredModule()){
-            SupportItemData supportItemData = new SupportItemData(module.getId(), module.getDesc(), module.getStepsDesc());
+            SupportItemData supportItemData = new SupportItemData(module.getId(), module.getDesc(), module.getActions());
             list.add(supportItemData);
         }
         return list;

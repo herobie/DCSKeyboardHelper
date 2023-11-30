@@ -9,21 +9,16 @@
     android:minHeight="500dp">
 
     <Button
-        android:id="@+id/btn_set_action"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:id="@+id/btn_step_backspace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:backgroundTint="@android:color/transparent"
-        android:elevation="2dp"
-        android:gravity="center"
-        android:hint="@string/set_keyboard_action"
-        android:textColor="@color/black_light"
-        android:textColorHint="@color/black"
-        android:textSize="12sp"
+        android:text="@string/backspace"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/ed_step_desc"
-        app:layout_constraintEnd_toStartOf="@+id/ed_step_desc"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ed_step_desc"
-        app:layout_constraintWidth_percent="0.28" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ed_step_desc"
+        app:layout_constraintTop_toTopOf="@+id/ed_step_desc" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/ed_step_desc"
@@ -32,10 +27,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.86"
+        app:layout_constraintHorizontal_bias="0.16"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.6">
+        app:layout_constraintWidth_percent="0.64">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -43,17 +38,35 @@
             android:hint="@string/input_button_step_desc" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ed_step_desc">
+
+        <GridLayout
+            android:id="@+id/grid_actions_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:rowCount="1"
+            android:columnCount="10"/>
+    </HorizontalScrollView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_keyboard"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/btn_set_confirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ed_step_desc"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
         tools:listitem="@layout/item_key" />
 
     <Button

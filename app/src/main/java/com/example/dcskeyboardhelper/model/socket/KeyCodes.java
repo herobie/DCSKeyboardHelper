@@ -1,5 +1,6 @@
 package com.example.dcskeyboardhelper.model.socket;
 
+import com.example.dcskeyboardhelper.model.bean.Action;
 import com.example.dcskeyboardhelper.model.bean.Key;
 
 import java.lang.reflect.Field;

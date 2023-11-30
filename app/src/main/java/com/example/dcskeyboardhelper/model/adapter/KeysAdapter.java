@@ -1,8 +1,6 @@
 package com.example.dcskeyboardhelper.model.adapter;
 
-import android.content.Context;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.SuperBaseAdapter;
 import com.example.dcskeyboardhelper.databinding.ItemKeyBinding;
+import com.example.dcskeyboardhelper.model.bean.Action;
 import com.example.dcskeyboardhelper.model.bean.Key;
 import com.example.dcskeyboardhelper.model.socket.KeyCodes;
 

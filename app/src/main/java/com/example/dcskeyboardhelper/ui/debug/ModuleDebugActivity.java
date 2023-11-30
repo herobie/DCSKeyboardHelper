@@ -85,13 +85,13 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                 OperatePageDebugFragment operatePageDebugFragment = viewModel.getOperatePageAdapter()
                         .getFragments().get(position);
                 if (!operatePageDebugFragment.isHidden()){//这里怕出问题，必须是当前显示的fragment才行
-                    Constant.currentPageId = operatePageDebugFragment.getOperatePage().getPageId();
+                    Constant.CURRENT_PAGE_ID = operatePageDebugFragment.getOperatePage().getPageId();
                     viewModel.setCurrentPage(operatePageDebugFragment.getOperatePage());
                     binding.tbSim.setTitle(operatePageDebugFragment.getOperatePage().getPageName());
                 }
                 if (Objects.requireNonNull(binding.vpTac.getAdapter()).getItemCount() <= 0){//如果没有任何页面则toolbar显示默认标题
                     binding.tbSim.setTitle(R.string.operate_panel);
-                    Constant.currentPageId = -1;//将当前pageId设置为-1，避免出现指针错误的情况
+                    Constant.CURRENT_PAGE_ID = -1;//将当前pageId设置为-1，避免出现指针错误的情况
                 }
             }
         });
@@ -164,11 +164,11 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                 alertBuilder.setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (Constant.currentPageId != -1){//检查一下页面指针出错没有
+                        if (Constant.CURRENT_PAGE_ID != -1){//检查一下页面指针出错没有
                             Toast.makeText(ModuleDebugActivity.this,
                                     getString(R.string.page_index_error), Toast.LENGTH_SHORT).show();
                         }
-                        viewModel.deletePage(Constant.currentPageId);
+                        viewModel.deletePage(Constant.CURRENT_PAGE_ID);
                     }
                 });
                 alertBuilder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {

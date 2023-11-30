@@ -36,14 +36,12 @@ public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBindi
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
         binding.rvInsertAction.setLayoutManager(layoutManager);
-        adapter = new KeyboardActionsAdapter(module.getStepsDesc(),
-                module.getKeyboardActions(), getContext());
+        adapter = new KeyboardActionsAdapter(module.getActions(), getContext());
         binding.rvInsertAction.setAdapter(adapter);
 
         //初始化module的信息至相应的输入框
         Objects.requireNonNull(binding.edButtonTitle.getEditText()).setText(module.getTitle());
         Objects.requireNonNull(binding.edButtonDesc.getEditText()).setText(module.getDesc());
-        Objects.requireNonNull(binding.edButtonStepSum.getEditText()).setText(String.valueOf(module.getStepsNum()));
         Objects.requireNonNull(binding.edButtonDefaultStep.getEditText()).setText(String.valueOf(module.getDefaultStep()));
         binding.cbAddInfo.setChecked(module.isStarred());
         if (Constant.STEP == module.getSwitchMode()){
@@ -65,8 +63,7 @@ public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBindi
             case R.id.btn_insert_confirm:
                 String title = Objects.requireNonNull(binding.edButtonTitle.getEditText()).getText().toString();
                 String desc = Objects.requireNonNull(binding.edButtonDesc.getEditText()).getText().toString();
-                int stepSum = Integer.parseInt(Objects.requireNonNull(binding.edButtonStepSum
-                        .getEditText()).getText().toString());
+                int stepSum = adapter.getActions().size();
                 int defaultStep = Integer.parseInt(Objects.requireNonNull(binding.edButtonDefaultStep
                         .getEditText()).getText().toString());
                 int switchMode = Constant.LOOP;
@@ -75,20 +72,20 @@ public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBindi
                 }
                 boolean isStarred = binding.cbAddInfo.isChecked();
                 //检查pageId和profileId有无错误
-                long pageId = Constant.currentPageId;
+                long pageId = Constant.CURRENT_PAGE_ID;
                 if (pageId == -1){
                     Toast.makeText(getContext(), getContext().getString(R.string.page_index_error), Toast.LENGTH_SHORT).show();
                     dismiss();
                     return;
                 }
-                long profileId = Constant.currentProfileId;
+                long profileId = Constant.CURRENT_PROFILE_ID;
                 if (profileId == -1){
                     Toast.makeText(getContext(), getContext().getString(R.string.profile_index_error), Toast.LENGTH_SHORT).show();
                     dismiss();
                     return;
                 }
-                 module.updateModule(title, desc, stepSum, defaultStep, switchMode, adapter.getStepsDesc(),
-                         adapter.getKeyboardActions(), isStarred, pageId, profileId, 0);
+                 module.updateModule(title, desc, stepSum, defaultStep, switchMode, adapter.getActions(),
+                         isStarred, pageId, profileId, 0);
                 viewModel.updateModule(module);
                 Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
                 dismiss();

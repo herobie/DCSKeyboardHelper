@@ -56,23 +56,24 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         super.onBindViewHolder(holder, position);
-        binding.tvActionName.setText(modules.get(position).getTitle());
-        binding.cbStar.setChecked(modules.get(position).isStarred());
+        binding.tvActionName.setText(modules.get(holder.getAdapterPosition()).getTitle());
+        binding.cbStar.setChecked(modules.get(holder.getAdapterPosition()).isStarred());
 
         binding.cbStar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ActionModule actionModule = modules.get(position);
+                ActionModule actionModule = modules.get(holder.getAdapterPosition());
                 actionModule.setStarred(isChecked);
                 viewModel.updateModule(actionModule);
-                onModuleChangeListener.onStarChange(modules.get(position), isChecked);
+                onModuleChangeListener.onStarChange(modules.get(holder.getAdapterPosition()), isChecked);
             }
         });
 
         binding.ibSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ModuleUpdateDialog updateDialog = new ModuleUpdateDialog(context, viewModel, modules.get(position));
+                ModuleUpdateDialog updateDialog = new ModuleUpdateDialog(context, viewModel,
+                        modules.get(holder.getAdapterPosition()));
                 updateDialog.show();
             }
         });
@@ -86,7 +87,7 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
                 alertBuilder.setPositiveButton(context.getString(R.string.confirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        viewModel.deleteModule(modules.get(position).getId());
+                        viewModel.deleteModule(modules.get(holder.getAdapterPosition()).getId());
                     }
                 });
                 alertBuilder.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -102,7 +103,7 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
         binding.clActionBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActionModule module = modules.get(position);
+                ActionModule module = modules.get(holder.getAdapterPosition());
                 int switchMode = module.getSwitchMode();
                 //step和loop的container参数不能直接传一个binding.stepIndicatorContainer，怀疑是和dataBinding绑定的viewHolder错乱有关
                 LinearLayout container = holder.itemView.findViewById(R.id.step_indicator_container);
@@ -134,6 +135,18 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
     }
 
     private void step(ActionModule module, LinearLayout container){
+        if (module.isReverse()){
+            if (module.getCurrentStep() > 0){
+                //开始执行步减操作
+                container.removeViewAt(module.getCurrentStep() - 1);
+                module.setCurrentStep(module.getCurrentStep() - 1);
+            }
+            if (module.getCurrentStep() == 0){
+                module.setReverse(false);//如果步减到了最小步骤，则开始步增
+            }
+            return;
+        }
+
         if (container.getChildCount() < module.getStepsNum()){
             //如果指示器里的view数量小于步骤总数，那么就增加view，同时module里的currentStep加1
             View view = new View(context);
@@ -142,8 +155,12 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
             view.setBackgroundResource(R.color.grey_light);
             view.setAlpha(0.5f);
             container.addView(view);
-            int currentStep = module.getCurrentStep();
-            module.setCurrentStep(currentStep + 1);
+            int currentStep = module.getCurrentStep();//注意这里，先获取本次的步骤位置
+            module.setCurrentStep(currentStep + 1);//再给module更新步骤位置
+            //步进模式下，如果达到了最大步骤，则开始步减
+            if (module.getCurrentStep() >= module.getStepsNum()){
+                module.setReverse(true);
+            }
         }else {
             //先移除掉所有位置大于步骤上限的view
             int index = container.getChildCount();

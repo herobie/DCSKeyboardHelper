@@ -77,7 +77,7 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                     Intent intent = new Intent(context, ModuleDebugActivity.class);
                                     intent.putExtra("profileId", profileId);
                                     context.startActivity(intent);
-                                    Constant.currentProfileId = profileId;
+                                    Constant.CURRENT_PROFILE_ID = profileId;
                                 }
                             }
                         }
@@ -105,7 +105,7 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         Intent intent = new Intent(context, ModuleDebugActivity.class);
                         intent.putExtra("profileId", profileId);
                         context.startActivity(intent);
-                        Constant.currentProfileId = profileId;
+                        Constant.CURRENT_PROFILE_ID = profileId;
                     }
                 }
             });

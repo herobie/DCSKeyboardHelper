@@ -53,8 +53,7 @@ public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBindi
         }else if (v.getId() == R.id.btn_insert_confirm){
             String title = Objects.requireNonNull(binding.edButtonTitle.getEditText()).getText().toString();
             String desc = Objects.requireNonNull(binding.edButtonDesc.getEditText()).getText().toString();
-            int stepSum = Integer.parseInt(Objects.requireNonNull(binding.edButtonStepSum
-                    .getEditText()).getText().toString());
+            int stepSum = adapter.getActions().size();
             int defaultStep = Integer.parseInt(Objects.requireNonNull(binding.edButtonDefaultStep
                     .getEditText()).getText().toString());
             int switchMode = Constant.LOOP;
@@ -63,20 +62,20 @@ public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBindi
             }
             boolean isStarred = binding.cbAddInfo.isChecked();
             //检查pageId和profileId有无错误
-            long pageId = Constant.currentPageId;
+            long pageId = Constant.CURRENT_PAGE_ID;
             if (pageId == -1){
                 Toast.makeText(getContext(), getContext().getString(R.string.page_index_error), Toast.LENGTH_SHORT).show();
                 dismiss();
                 return;
             }
-            long profileId = Constant.currentProfileId;
+            long profileId = Constant.CURRENT_PROFILE_ID;
             if (profileId == -1){
                 Toast.makeText(getContext(), getContext().getString(R.string.profile_index_error), Toast.LENGTH_SHORT).show();
                 dismiss();
                 return;
             }
             ActionModule module = new ActionModule(title, desc,  stepSum, defaultStep, switchMode,
-                    adapter.getStepsDesc(), adapter.getKeyboardActions(),
+                    adapter.getActions(),
                     isStarred, pageId, profileId, 0);
             viewModel.insertModule(module);
             Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();

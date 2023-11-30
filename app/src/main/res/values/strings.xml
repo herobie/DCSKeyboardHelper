@@ -59,6 +59,7 @@
     <string name="set_keyboard_action">录入按键动作</string>
     <string name="waiting_for_input">等待输入…</string>
     <string name="choose_key">选择要模拟的按键</string>
+    <string name="backspace">退格</string>
 
     <string name="loop">循环</string>
     <string name="step">步进</string>

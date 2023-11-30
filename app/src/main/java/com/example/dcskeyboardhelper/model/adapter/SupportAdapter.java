@@ -28,12 +28,12 @@ public class SupportAdapter extends SuperBaseAdapter<ItemSupportBinding> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        if (status != null){
+        if (status != null && !status.isEmpty()){
             binding.tvSupportTitle.setText(status.get(position).getTitle());
             int currentStep = status.get(position).getCurrentStep();
-            List<String> stepDesc = status.get(position).getStepDesc();
-            if (stepDesc != null && !stepDesc.isEmpty()){
-                binding.tvSupportStatus.setText(stepDesc.get(currentStep));
+            if (status.get(position).getActions() != null && !status.get(position).getActions().isEmpty()){
+                String stepDesc = status.get(position).getActions().get(currentStep).getName();
+                binding.tvSupportStatus.setText(stepDesc);
             }
         }
 

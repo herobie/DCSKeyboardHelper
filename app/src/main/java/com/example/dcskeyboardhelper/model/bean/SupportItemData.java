@@ -6,25 +6,25 @@ import java.util.List;
 public class SupportItemData {
     private long moduleId;
     private String title;//support名
-    private List<String> stepDesc;//各个步骤的名称
     private int currentStep = 0;//当前步骤指针位置
+    private final List<Action> actions;
 
-    public SupportItemData(long moduleId, String title, List<String> stepDesc, int currentStep) {
+    public SupportItemData(long moduleId, String title, List<Action> actions, int currentStep) {
         this.title = title;
-        this.stepDesc = stepDesc;
+        this.actions = actions;
         this.currentStep = currentStep;
         this.moduleId = moduleId;
     }
 
-    public SupportItemData(long moduleId, String title, List<String> stepDesc) {
-        this.title = title;
-        this.stepDesc = stepDesc;
+    public SupportItemData(long moduleId, String title, List<Action> actions) {
         this.moduleId = moduleId;
+        this.title = title;
+        this.actions = actions;
     }
 
     public String getCurrentStepName(){
-        if (stepDesc != null){
-            return stepDesc.get(currentStep);
+        if (actions != null){
+            return actions.get(currentStep).getName();
         }
         return null;
     }
@@ -37,14 +37,6 @@ public class SupportItemData {
         this.title = title;
     }
 
-    public List<String> getStepDesc() {
-        return stepDesc;
-    }
-
-    public void setStepDesc(List<String> stepDesc) {
-        this.stepDesc = stepDesc;
-    }
-
     public int getCurrentStep() {
         return currentStep;
     }
@@ -55,5 +47,9 @@ public class SupportItemData {
 
     public long getModuleId() {
         return moduleId;
+    }
+
+    public List<Action> getActions() {
+        return actions;
     }
 }

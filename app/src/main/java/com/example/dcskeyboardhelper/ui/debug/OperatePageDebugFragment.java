@@ -21,9 +21,7 @@ import com.example.dcskeyboardhelper.ui.OnModuleChangeListener;
 import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 import com.example.dcskeyboardhelper.viewModel.OperatePageViewModel;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBinding, OperatePageViewModel>
         implements OnModuleChangeListener{
@@ -119,7 +117,7 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
         if (list != null){
             if (isStarred){
                 SupportItemData supportItemData = new SupportItemData(module.getId(), module.getDesc(),
-                        module.getStepsDesc(), module.getCurrentStep());
+                        module.getActions(), module.getCurrentStep());
                 list.add(supportItemData);
             }else {
                 int index = 0;

@@ -2,7 +2,7 @@ package com.example.dcskeyboardhelper.util;
 
 import androidx.room.TypeConverter;
 
-import com.example.dcskeyboardhelper.model.bean.Key;
+import com.example.dcskeyboardhelper.model.bean.Action;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -10,13 +10,13 @@ import java.util.List;
 
 public class KeyConverter {
     @TypeConverter
-    public String objectToKey(List<Key> keys){
-        return GsonInstance.getInstance().getGson().toJson(keys);
+    public String objectToKey(List<Action> actions){
+        return GsonInstance.getInstance().getGson().toJson(actions);
     }
 
     @TypeConverter
-    public List<Key> keyToObject(String json){
-        Type listType = new TypeToken<List<Key>>(){}.getType();
+    public List<Action> keyToObject(String json){
+        Type listType = new TypeToken<List<Action>>(){}.getType();
         return GsonInstance.getInstance().getGson().fromJson(json, listType);
     }
 }

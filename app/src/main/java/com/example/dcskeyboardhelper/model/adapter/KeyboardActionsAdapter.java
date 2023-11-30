@@ -12,7 +12,7 @@ import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.SuperBaseAdapter;
 import com.example.dcskeyboardhelper.databinding.ItemInsertActionBinding;
 import com.example.dcskeyboardhelper.model.Constant;
-import com.example.dcskeyboardhelper.model.bean.Key;
+import com.example.dcskeyboardhelper.model.bean.Action;
 import com.example.dcskeyboardhelper.model.socket.KeyCodes;
 import com.example.dcskeyboardhelper.ui.dialog.SetKeyboardActionDialog;
 
@@ -21,19 +21,16 @@ import java.util.List;
 
 //创建/更新界面下显示已经添加的操作模块的Adapter
 public class KeyboardActionsAdapter extends SuperBaseAdapter<ItemInsertActionBinding> {
-    private List<String> stepsDesc;//各步骤的描述，如（自动驾驶：开）中的“开”“关”
-    private List<Integer> keyboardActions;//与该按钮绑定的按键
+    private List<Action> actions;//每个Key代表一个模拟动作的模块
     private final Context context;
 
     public KeyboardActionsAdapter(Context context) {
         this.context = context;
-        this.keyboardActions = new ArrayList<>();
-        this.stepsDesc = new ArrayList<>();
+        actions = new ArrayList<>();
     }
 
-    public KeyboardActionsAdapter(List<String> stepsDesc, List<Integer> keyboardActions, Context context) {
-        this.stepsDesc = stepsDesc;
-        this.keyboardActions = keyboardActions;
+    public KeyboardActionsAdapter(List<Action> actions, Context context) {
+        this.actions = actions;
         this.context = context;
     }
 
@@ -45,12 +42,10 @@ public class KeyboardActionsAdapter extends SuperBaseAdapter<ItemInsertActionBin
             @Override
             public void onClick(View v) {
                 SetKeyboardActionDialog keyboardActionDialog;
-                if (keyboardActions.isEmpty() || position >= keyboardActions.size()){
+                if (actions.isEmpty() || position >= actions.size()){
                     keyboardActionDialog = new SetKeyboardActionDialog(context);
                 }else {
-                    String name = KeyCodes.getKeyNameByValue(keyboardActions.get(position));
-                    Key key = new Key(name, keyboardActions.get(position));
-                    keyboardActionDialog = new SetKeyboardActionDialog(context, key, stepsDesc.get(position));
+                    keyboardActionDialog = new SetKeyboardActionDialog(context, actions.get(position));
                 }
 
                 keyboardActionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -60,29 +55,19 @@ public class KeyboardActionsAdapter extends SuperBaseAdapter<ItemInsertActionBin
                         String status = keyboardActionDialog.getDialog_status();
                         if (Constant.CREATE.equals(status)){
                             //获取步骤名及所要模拟的按键Code
-                            Key key = keyboardActionDialog.getKey();
-                            if (key == null){//判空，如果为空则表明不是按确认键退出的，直接return
+                            Action action = keyboardActionDialog.getActions();
+                            if (action == null){//判空，如果为空则表明不是按确认键退出的，直接return
                                 return;
                             }else {
-                                keyboardActions.add(key.getCode());
-//                                binding.tvAction.setText(key.getName());
+                                actions.add(action);//创建后添加至Key集合
                             }
-                            String desc = keyboardActionDialog.getStepDesc();
-                            if (desc != null && stepsDesc != null){
-//                                binding.tvActionDesc.setText(desc);
-                            }
-                            stepsDesc.add(desc);
                             notifyDataSetChanged();// TODO: 2023/11/30 更高效的刷新方式
                         }else if (Constant.UPDATE.equals(status)){
-                            Key key = keyboardActionDialog.getKey();
-                            if (key == null){
+                            Action action = keyboardActionDialog.getActions();
+                            if (action == null){
                                 return;
                             }
-                            keyboardActions.set(position, key.getCode());
-//                            binding.tvAction.setText(key.getName());
-                            String desc = keyboardActionDialog.getStepDesc();
-//                            binding.tvActionDesc.setText(desc);
-                            stepsDesc.set(position, desc);
+                            actions.set(position, action);//更新该位置的key
                             notifyItemChanged(position);
                         }
 
@@ -95,18 +80,15 @@ public class KeyboardActionsAdapter extends SuperBaseAdapter<ItemInsertActionBin
         binding.ibActionDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (keyboardActions != null){
-                    keyboardActions.remove(position);
-                }
-                if (stepsDesc != null){
-                    stepsDesc.remove(position);
+                if (actions != null){
+                    actions.remove(position);
                 }
                 notifyItemRemoved(position);
-                notifyItemChanged(position, keyboardActions.size());
+                notifyItemChanged(position, actions.size());
             }
         });
 
-        if (keyboardActions.isEmpty() || position >= keyboardActions.size()){
+        if (actions.isEmpty() || position >= actions.size()){
             binding.clKeyboardSet.setVisibility(View.GONE);
         }else {
             binding.clKeyboardSet.setVisibility(View.VISIBLE);
@@ -116,8 +98,8 @@ public class KeyboardActionsAdapter extends SuperBaseAdapter<ItemInsertActionBin
 
         if (isKeyboardSet){
             binding.tvInsertStep.setText(context.getString(R.string.action_step_placeholder_no_number) + (1 + position));
-            binding.tvActionDesc.setText(stepsDesc.get(position));
-            binding.tvAction.setText(KeyCodes.getKeyNameByValue(keyboardActions.get(position)));
+            binding.tvActionDesc.setText(actions.get(position).getName());
+            binding.tvAction.setText(KeyCodes.getKeyNameByValue(actions.get(position).getCodes().get(0)));
         }
     }
 
@@ -128,22 +110,14 @@ public class KeyboardActionsAdapter extends SuperBaseAdapter<ItemInsertActionBin
 
     @Override
     public int getItemCount() {
-        return keyboardActions == null? 1: keyboardActions.size() + 1;
+        return actions == null? 1: actions.size() + 1;
     }
 
-    public List<String> getStepsDesc() {
-        return stepsDesc;
+    public List<Action> getActions() {
+        return actions;
     }
 
-    public void setStepsDesc(List<String> stepsDesc) {
-        this.stepsDesc = stepsDesc;
-    }
-
-    public List<Integer> getKeyboardActions() {
-        return keyboardActions;
-    }
-
-    public void setKeyboardActions(List<Integer> keyboardActions) {
-        this.keyboardActions = keyboardActions;
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
     }
 }

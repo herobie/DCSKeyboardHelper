@@ -41,10 +41,8 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/input_keyboard_action"
                 android:textColor="@color/black"
-                app:layout_constraintEnd_toEndOf="@+id/ed_button_step_sum"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="@+id/ed_button_step_sum"
-                app:layout_constraintTop_toBottomOf="@+id/ed_button_step_sum" />
+                app:layout_constraintStart_toStartOf="@+id/ed_button_desc"
+                app:layout_constraintTop_toBottomOf="@+id/ed_button_default_step" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ed_button_title"
@@ -86,34 +84,14 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ed_button_step_sum"
-                style="@style/TextInputEditRadius"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                app:layout_constraintEnd_toStartOf="@+id/guideline8"
-                app:layout_constraintHorizontal_bias="0.32"
-                app:layout_constraintStart_toStartOf="@+id/ed_button_desc"
-                app:layout_constraintTop_toBottomOf="@id/ed_button_desc">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/input_button_step_sum"
-                    android:inputType="number" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ed_button_default_step"
                 style="@style/TextInputEditRadius"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
                 app:layout_constraintEnd_toEndOf="@+id/ed_button_desc"
-                app:layout_constraintHorizontal_bias="0.32"
-                app:layout_constraintStart_toStartOf="@+id/guideline8"
-                app:layout_constraintTop_toTopOf="@+id/ed_button_step_sum">
+                app:layout_constraintStart_toStartOf="@+id/ed_button_desc"
+                app:layout_constraintTop_toBottomOf="@+id/ed_button_desc">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -126,7 +104,7 @@
                 android:id="@+id/rg_switch_mode"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="@+id/rv_insert_action"
                 app:layout_constraintStart_toStartOf="@+id/rv_insert_action"
@@ -154,15 +132,16 @@
                 android:id="@+id/cb_add_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/choose_button_add_info"
-                app:layout_constraintStart_toStartOf="@+id/rg_switch_mode"
+                app:layout_constraintStart_toStartOf="@+id/rv_insert_action"
                 app:layout_constraintTop_toBottomOf="@+id/rg_switch_mode" />
 
             <Button
                 android:id="@+id/btn_insert_cancel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:backgroundTint="@color/grey_light"
                 android:text="@string/cancel"
                 android:textSize="18sp"
@@ -192,8 +171,8 @@
                 android:layout_width="0dp"
                 android:layout_height="90dp"
                 android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/ed_button_default_step"
-                app:layout_constraintStart_toStartOf="@+id/ed_button_step_sum"
+                app:layout_constraintEnd_toEndOf="@+id/ed_button_desc"
+                app:layout_constraintStart_toStartOf="@+id/ed_button_desc"
                 app:layout_constraintTop_toBottomOf="@+id/textView2"
                 tools:itemCount="5"
                 tools:listitem="@layout/item_insert_action" />
