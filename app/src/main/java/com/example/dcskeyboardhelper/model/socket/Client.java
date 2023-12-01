@@ -22,6 +22,10 @@ public class Client {
     public static final int SERVER_CONNECT_FAILED = -1;
     public static final int SERVER_CONNECTING = 2;
 
+    public static final String BROADCAST_NO_CONNECT = "Device No Connect";
+    public static final String BROADCAST_CONNECTED = "Device Connected";
+    public static final String BROADCAST_RECONNECTING = "Device Reconnecting";
+
     public Client(String serverIp, int port, MutableLiveData<Integer> connectionStatus) {
         this.serverIp = serverIp;
         this.port = port;

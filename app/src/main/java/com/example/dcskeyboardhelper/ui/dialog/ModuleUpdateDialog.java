@@ -98,6 +98,10 @@ public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBindi
         return isUpdate;
     }
 
+    public ActionModule getModule() {
+        return module;
+    }
+
     @Override
     protected int getLayoutRes() {
         return R.layout.dialog_insert_action_module;

@@ -22,6 +22,7 @@ import com.example.dcskeyboardhelper.ui.OnModuleChangeListener;
 import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 import com.example.dcskeyboardhelper.viewModel.OperatePageViewModel;
 
+import java.util.Collections;
 import java.util.List;
 
 public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBinding, OperatePageViewModel>
@@ -59,7 +60,8 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
                 int fromPosition = viewHolder.getLayoutPosition();
                 int targetPosition = target.getLayoutPosition();
                 if (adapter != null){
-                    return adapter.getItemMoveListener().onMove(fromPosition, targetPosition);
+                    onModulesSwap(fromPosition, targetPosition);
+                    return true;
                 }
                 return true;
             }
@@ -72,20 +74,14 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
 
             @Override
             public float getMoveThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
-                return 0.5f;
+                return 0.8f;
             }
         });
         itemTouchHelper.attachToRecyclerView(binding.rvOperate);
 
-        viewModel.getAllModules(operatePage.getPageId()).observe(this, new Observer<List<ActionModule>>() {
-            @Override
-            public void onChanged(List<ActionModule> actionModules) {
-                //只会刷新显示中的fragment的adapter
-                if (!OperatePageDebugFragment.this.isHidden()){
-                    adapter.setModules(actionModules);
-                }
-            }
-        });
+        List<ActionModule> modules = viewModel.getAllModules(operatePage.getPageId());
+        adapter.setModules(modules);
+        onInitModules();
     }
 
     @Override
@@ -118,12 +114,13 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
 
     @Override
     public void onInitModules() {
-        adapter.notifyDataSetChanged();
         Log.d("MainActivity", "onInitModules: ");
+        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onStarChange(ActionModule module, boolean isStarred) {
+        Log.d("MainActivity", "onStarChange: ");
         List<SupportItemData> list = moduleDebugViewModel.getStatusDisplayed().getValue();
         if (list != null){
             if (isStarred){
@@ -150,23 +147,50 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
     }
 
     @Override
-    public void onModuleInserted(int position) {
+    public void onModuleInserted(ActionModule module, int position) {
+        if (module.isStarred()){//检查一下是不是星标
+            onStarChange(module, true);
+        }
+        if (position == -1){
+            adapter.getModules().add(module);
+            module.setGridPosition(adapter.getModules().size());
+            adapter.notifyItemChanged(adapter.getModules().size());
+            viewModel.insertModule(module);
+            return;
+        }
+        module.setGridPosition(position);
+        adapter.getModules().add(position, module);
         adapter.notifyItemInserted(position);
+        viewModel.insertModule(module);
     }
 
     @Override
     public void onModuleRemoved(int position) {
-        adapter.notifyItemRemoved(position);
+        viewModel.deleteModule(adapter.getModules().get(position).getId());
+        if (adapter.getModules() != null){
+            adapter.getModules().remove(position);
+            adapter.notifyItemRemoved(position);
+        }
     }
 
     @Override
-    public void onModuleUpdate(int position) {
+    public void onModuleUpdate(int position, ActionModule module) {
+        Log.d("MainActivity", "onModuleUpdate: ");
+        viewModel.updateModule(module);
+        adapter.getModules().set(position, module);
         adapter.notifyItemChanged(position);
     }
 
     @Override
     public void onModulesSwap(int from, int to) {
-        adapter.notifyItemChanged(from);
-        adapter.notifyItemChanged(to);
+        Log.d("MainActivity", "onSwap: " + from + " and " + to);
+        //刷新adapter
+        Collections.swap(adapter.getModules(), from, to);
+        adapter.notifyItemMoved(from, to);
+        //数据库更新位置坐标
+        for (int i = 0; i < adapter.getModules().size(); i++){
+            adapter.getModules().get(i).setGridPosition(i);
+        }
+        viewModel.updateModule(adapter.getModules().toArray(new ActionModule[0]));
     }
 }

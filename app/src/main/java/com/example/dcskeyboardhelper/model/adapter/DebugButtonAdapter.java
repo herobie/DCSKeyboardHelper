@@ -28,12 +28,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, OperatePageViewModel>
-        implements ItemMoveListener {
+public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, OperatePageViewModel>{
     private List<ActionModule> modules;
     private final Context context;
     private OnModuleChangeListener onModuleChangeListener;
-    private final ItemMoveListener itemMoveListener = this;
 
     public DebugButtonAdapter(OperatePageViewModel viewModel, Context context) {
         super(viewModel);
@@ -42,32 +40,28 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
 
     public void setModules(List<ActionModule> modules) {
         this.modules = modules;
-        notifyDataSetChanged();
-    }
-
-    @NonNull
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder holder = super.onCreateViewHolder(parent, viewType);
-        holder.setIsRecyclable(false);//省事，避免VH复用带来的显示错乱问题
-        return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         super.onBindViewHolder(holder, position);
+        Log.d("MainActivity", "onBindViewHolder: ");
         binding.tvActionName.setText(modules.get(holder.getAdapterPosition()).getTitle());
         binding.cbStar.setChecked(modules.get(holder.getAdapterPosition()).isStarred());
+
+        //将指针指向默认步骤处
+//        initDefaultIndicator(modules.get(position), binding.stepIndicatorContainer);
 
         binding.cbStar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ActionModule actionModule = modules.get(holder.getAdapterPosition());
-                actionModule.setStarred(isChecked);
-                actionModule.setCurrentStep(0);//这里把步骤指针重置为0.避免后面显示错乱了
-                onModuleChangeListener.onModuleUpdate(holder.getAdapterPosition());
-                viewModel.updateModule(actionModule);
-                onModuleChangeListener.onStarChange(modules.get(holder.getAdapterPosition()), isChecked);
+                if (buttonView.isPressed()){
+                    ActionModule actionModule = modules.get(holder.getAdapterPosition());
+                    actionModule.setStarred(isChecked);
+                    actionModule.setCurrentStep(0);//这里把步骤指针重置为0.避免后面显示错乱了
+                    viewModel.updateModule(actionModule);
+                    onModuleChangeListener.onStarChange(modules.get(holder.getAdapterPosition()), isChecked);
+                }
             }
         });
 
@@ -80,7 +74,8 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         if (updateDialog.isUpdate()){
-                            onModuleChangeListener.onModuleUpdate(holder.getAdapterPosition());
+                            onModuleChangeListener.onModuleUpdate(holder.getAdapterPosition(), updateDialog.getModule());
+                            notifyItemChanged(holder.getAdapterPosition());
                         }
                     }
                 });
@@ -97,7 +92,11 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
                 alertBuilder.setPositiveButton(context.getString(R.string.confirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        viewModel.deleteModule(modules.get(position).getId());
+                        //删除时，如果这是一个星标的按钮，那么会先取消其星标（目的在于将左侧Support栏的信息清除）
+                        if (modules.get(position).isStarred()){
+                            onModuleChangeListener.onStarChange(modules.get(position), false);
+                        }
+                        onModuleChangeListener.onModuleRemoved(position);
                     }
                 });
                 alertBuilder.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -189,6 +188,18 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
         }
     }
 
+    private void initDefaultIndicator(ActionModule module, LinearLayout container){
+        for (int i = 0; i < module.getDefaultStep(); i++){
+            View view = new View(context);
+            view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    measureIndicatorWeight(container, module.getStepsNum())));
+            view.setBackgroundResource(R.color.grey_light);
+            view.setAlpha(0.5f);
+            container.addView(view);
+            Log.d("MainActivity", "ContainerChildCount:" + container.getChildCount());
+        }
+    }
+
     private int measureIndicatorWeight(LinearLayout container, int stepSum){
         return container.getMeasuredHeight() / stepSum;
     }
@@ -209,26 +220,5 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
 
     public void setOnModuleChangeListener(OnModuleChangeListener onModuleChangeListener) {
         this.onModuleChangeListener = onModuleChangeListener;
-    }
-
-    public ItemMoveListener getItemMoveListener() {
-        return itemMoveListener;
-    }
-
-    @Override
-    public boolean onMove(int from, int to) {
-        //adapter里交换元素
-        Collections.swap(modules, from, to);
-        notifyItemMoved(from, to);
-        //获取交换双方的对象
-        ActionModule fromModule = modules.get(from);
-        ActionModule toModule = modules.get(to);
-        //将二者坐标对调
-        fromModule.setGridPosition(to);
-        toModule.setGridPosition(from);
-        //保存坐标
-//        viewModel.updateModule(fromModule);
-//        viewModel.updateModule(toModule);
-        return true;
     }
 }

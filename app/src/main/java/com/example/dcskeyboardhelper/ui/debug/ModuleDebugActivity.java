@@ -22,6 +22,7 @@ import com.example.dcskeyboardhelper.base.BaseActivity;
 import com.example.dcskeyboardhelper.databinding.ActivitySimulateBinding;
 import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.adapter.FragmentsAdapter;
+import com.example.dcskeyboardhelper.model.bean.ActionModule;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
 import com.example.dcskeyboardhelper.ui.dialog.ModuleInsertDialog;
 import com.example.dcskeyboardhelper.ui.dialog.PageDialog;
@@ -141,6 +142,17 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                         if (position == 0){
                             ModuleInsertDialog moduleInsertDialog
                                     = new ModuleInsertDialog(ModuleDebugActivity.this, viewModel);
+                            moduleInsertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    ActionModule module = moduleInsertDialog.getModule();
+                                    if (module != null){
+                                        int position = binding.vpTac.getCurrentItem();
+                                        viewModel.getOperatePageAdapter().getFragments()
+                                                .get(position).onModuleInserted(module, -1);
+                                    }
+                                }
+                            });
                             moduleInsertDialog.show();
                         }else if (position == 1){
                             PageDialog pageDialog = new PageDialog(ModuleDebugActivity.this, viewModel);

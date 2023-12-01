@@ -31,24 +31,31 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         viewModel.getConnectionStatus().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
+                //连接情况发生改变时，会发送广播告知相应的接收者当前连接情况
+                Intent intent = new Intent(Constant.BROADCAST_CONNECT_STATUS_CHANGE);
                 switch (integer){
                     case Client.NO_CONNECTED:
                         binding.tvConnectionStatus.setText(getString(R.string.device_no_connect));
                         binding.btnDisconnect.setVisibility(View.INVISIBLE);
+                        intent.putExtra(Constant.CONNECT_STATUS, Client.BROADCAST_NO_CONNECT);
                         break;
                     case Client.SERVER_CONNECTED:
                         binding.tvConnectionStatus.setText(getString(R.string.device_connected));
                         binding.btnDisconnect.setVisibility(View.VISIBLE);
+                        intent.putExtra(Constant.CONNECT_STATUS, Client.BROADCAST_CONNECTED);
                         break;
                     case Client.SERVER_CONNECT_FAILED:
                         binding.tvConnectionStatus.setText(getString(R.string.connect_failed));
                         binding.btnDisconnect.setVisibility(View.INVISIBLE);
+                        intent.putExtra(Constant.CONNECT_STATUS, Client.BROADCAST_NO_CONNECT);
                         break;
                     case Client.SERVER_CONNECTING:
                         binding.tvConnectionStatus.setText(getString(R.string.device_connecting));
                         binding.btnDisconnect.setVisibility(View.INVISIBLE);
+                        intent.putExtra(Constant.CONNECT_STATUS, Client.BROADCAST_RECONNECTING);
                         break;
                 }
+                sendBroadcast(intent);
             }
         });
     }

@@ -11,6 +11,8 @@
     <string name="device_connecting">设备连接中</string>
     <string name="connect_failed">连接失败</string>
     <string name="device_disconnect">设备已断开</string>
+    <string name="connection_exception">连接异常</string>
+    <string name="reconnecting">重新连接中…</string>
 
     <string name="input_server_ip">输入服务端ip地址</string>
     <string name="input_port">输入端口</string>
@@ -60,6 +62,7 @@
     <string name="waiting_for_input">等待输入…</string>
     <string name="choose_key">选择要模拟的按键</string>
     <string name="backspace">退格</string>
+    <string name="actions_non_null">请至少选择一个要模拟的按键!</string>
 
     <string name="loop">循环</string>
     <string name="step">步进</string>
@@ -79,4 +82,5 @@
     <string name="load_profile_error">读取存档时出现问题!</string>
     <string name="page_index_error">页面指针错误，请退出当前页面重试!</string>
     <string name="profile_index_error">配置指针出错，请返回主界面重试!</string>
+    
 </resources>

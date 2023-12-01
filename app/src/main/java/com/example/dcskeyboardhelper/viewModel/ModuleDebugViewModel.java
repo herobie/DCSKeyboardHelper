@@ -23,11 +23,11 @@ import java.util.List;
 public class ModuleDebugViewModel extends AndroidViewModel {
     private long profileId;
     private final OperatePageModel pageModel;
-    private ActionModuleModel actionModuleModel;
+    private final ActionModuleModel actionModuleModel;
     private FragmentManager fragmentManager;
     private FragmentsAdapter<OperatePageDebugFragment> operatePageAdapter;
     private OperatePage currentPage;
-    private MutableLiveData<List<SupportItemData>> statusDisplayed;//保存左侧support页面的文字
+    private final MutableLiveData<List<SupportItemData>> statusDisplayed;//保存左侧support页面的文字
     public ModuleDebugViewModel(@NonNull Application application) {
         super(application);
         pageModel = new OperatePageModel(application);

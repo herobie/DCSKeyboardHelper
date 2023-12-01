@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -62,11 +63,9 @@ public class SetKeyboardActionDialog extends Dialog implements KeysAdapter.KeySe
         if (action != null){//如果是更新模式下，点进来会显示已经设置好的步骤名及模拟操作
             Objects.requireNonNull(ed_step_desc.getEditText()).setText(action.getName());
             if (codes != null){
-                int index = 0;
                 for (int code : codes){
                     //显示该步骤所要执行的模拟按键
                     grid_actions_container.addView(createKeyActionIndicator(KeyCodes.getKeyNameByValue(code)));
-                    index++;
                 }
             }
         }
@@ -79,6 +78,11 @@ public class SetKeyboardActionDialog extends Dialog implements KeysAdapter.KeySe
         btn_set_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //每个步骤至少选择一个模拟按键
+                if (grid_actions_container.getChildCount() == 0){
+                    Toast.makeText(getContext(), getContext().getString(R.string.actions_non_null), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 isConfirm = true;
                 dismiss();
             }

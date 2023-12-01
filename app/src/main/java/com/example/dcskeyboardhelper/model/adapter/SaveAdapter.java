@@ -20,6 +20,7 @@ import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.bean.Profile;
 import com.example.dcskeyboardhelper.ui.debug.ModuleDebugActivity;
 import com.example.dcskeyboardhelper.ui.dialog.ProfileDialog;
+import com.example.dcskeyboardhelper.ui.simulate.SimulateActivity;
 import com.example.dcskeyboardhelper.util.DateUtil;
 import com.example.dcskeyboardhelper.viewModel.LoadViewModel;
 
@@ -72,7 +73,10 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             if (profileDialog.getNewProfileId() != -1){//返回-1代表添加失败或点击了取消添加按钮
                                 long profileId = profileDialog.getNewProfileId();//获取配置id并传给下一个页面
                                 if (Constant.SIMULATION_MODE.equals(parentPage)){
-                                    // TODO: 2023/11/25 跳转至模拟页面
+                                    Intent intent = new Intent(context, SimulateActivity.class);
+                                    intent.putExtra("profiledId", profileId);
+                                    context.startActivity(intent);
+                                    Constant.CURRENT_PROFILE_ID = profileId;
                                 }else if (Constant.DEBUG_MODE.equals(parentPage)){
                                     Intent intent = new Intent(context, ModuleDebugActivity.class);
                                     intent.putExtra("profileId", profileId);
@@ -99,7 +103,11 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     if (Constant.SIMULATION_MODE.equals(parentPage)){
-                        // TODO: 2023/11/25 跳转至模拟页面
+                        long profileId = viewModel.getProfileById(profiles.get(position).getId());
+                        Intent intent = new Intent(context, SimulateActivity.class);
+                        intent.putExtra("profileId", profileId);
+                        context.startActivity(intent);
+                        Constant.CURRENT_PROFILE_ID = profileId;
                     }else if (Constant.DEBUG_MODE.equals(parentPage)){
                         long profileId = viewModel.getProfileById(profiles.get(position).getId());
                         Intent intent = new Intent(context, ModuleDebugActivity.class);

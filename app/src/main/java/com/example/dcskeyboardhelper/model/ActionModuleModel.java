@@ -1,6 +1,7 @@
 package com.example.dcskeyboardhelper.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
@@ -26,10 +27,10 @@ public class ActionModuleModel extends BaseModel {
         actionModuleDao = userDataBase.getActionModuleDao();
     }
 
-    public LiveData<List<ActionModule>> queryAllModules(long pageId){
-        Future<LiveData<List<ActionModule>>> future = executorService.submit(new Callable<LiveData<List<ActionModule>>>() {
+    public List<ActionModule> queryAllModules(long pageId){
+        Future<List<ActionModule>> future = executorService.submit(new Callable<List<ActionModule>>() {
             @Override
-            public LiveData<List<ActionModule>> call() throws Exception {
+            public List<ActionModule> call() throws Exception {
                 return actionModuleDao.queryAll(pageId);
             }
         });
@@ -108,5 +109,16 @@ public class ActionModuleModel extends BaseModel {
             list.add(supportItemData);
         }
         return list;
+    }
+
+    //当发生模块交换位置时调用，用于更新模块位置数据
+    public void swapModule(List<ActionModule> modules){
+        Log.d("MainActivity", "swapModule: ");
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
     }
 }

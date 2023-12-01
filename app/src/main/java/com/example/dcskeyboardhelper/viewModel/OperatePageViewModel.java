@@ -17,7 +17,7 @@ public class OperatePageViewModel extends BaseViewModel<ActionModuleModel> {
         model = new ActionModuleModel(application);
     }
 
-    public LiveData<List<ActionModule>> getAllModules(long pageId){
+    public List<ActionModule> getAllModules(long pageId){
         return model.queryAllModules(pageId);
     }
 
@@ -31,5 +31,9 @@ public class OperatePageViewModel extends BaseViewModel<ActionModuleModel> {
 
     public void deleteModule(long id){
         model.deleteModule(id);
+    }
+
+    public void swapModule(List<ActionModule> modules){
+        model.swapModule(modules);
     }
 }
