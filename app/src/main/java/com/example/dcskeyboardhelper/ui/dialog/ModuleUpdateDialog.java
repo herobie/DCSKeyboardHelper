@@ -23,6 +23,7 @@ public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBindi
     private final OperatePageViewModel viewModel;
     private final ActionModule module;
     private KeyboardActionsAdapter adapter;
+    private boolean isUpdate = false;
     public ModuleUpdateDialog(@NonNull Context context, OperatePageViewModel viewModel, ActionModule module) {
         super(context);
         this.viewModel = viewModel;
@@ -88,8 +89,13 @@ public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBindi
                          isStarred, pageId, profileId, 0);
                 viewModel.updateModule(module);
                 Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
+                isUpdate = true;
                 dismiss();
         }
+    }
+
+    public boolean isUpdate() {
+        return isUpdate;
     }
 
     @Override

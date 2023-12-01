@@ -64,6 +64,8 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 ActionModule actionModule = modules.get(holder.getAdapterPosition());
                 actionModule.setStarred(isChecked);
+                actionModule.setCurrentStep(0);//这里把步骤指针重置为0.避免后面显示错乱了
+                onModuleChangeListener.onModuleUpdate(holder.getAdapterPosition());
                 viewModel.updateModule(actionModule);
                 onModuleChangeListener.onStarChange(modules.get(holder.getAdapterPosition()), isChecked);
             }
@@ -74,6 +76,14 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
             public void onClick(View v) {
                 ModuleUpdateDialog updateDialog = new ModuleUpdateDialog(context, viewModel,
                         modules.get(holder.getAdapterPosition()));
+                updateDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if (updateDialog.isUpdate()){
+                            onModuleChangeListener.onModuleUpdate(holder.getAdapterPosition());
+                        }
+                    }
+                });
                 updateDialog.show();
             }
         });
@@ -87,7 +97,7 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
                 alertBuilder.setPositiveButton(context.getString(R.string.confirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        viewModel.deleteModule(modules.get(holder.getAdapterPosition()).getId());
+                        viewModel.deleteModule(modules.get(position).getId());
                     }
                 });
                 alertBuilder.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {

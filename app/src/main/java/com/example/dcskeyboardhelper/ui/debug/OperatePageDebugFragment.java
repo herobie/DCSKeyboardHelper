@@ -1,6 +1,7 @@
 package com.example.dcskeyboardhelper.ui.debug;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -111,6 +112,16 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
         return operatePage;
     }
 
+    public List<ActionModule> getAdapterModules() {
+        return adapter.getModules();
+    }
+
+    @Override
+    public void onInitModules() {
+        adapter.notifyDataSetChanged();
+        Log.d("MainActivity", "onInitModules: ");
+    }
+
     @Override
     public void onStarChange(ActionModule module, boolean isStarred) {
         List<SupportItemData> list = moduleDebugViewModel.getStatusDisplayed().getValue();
@@ -136,5 +147,26 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
     @Override
     public void onStepChange(int currentStep) {
 
+    }
+
+    @Override
+    public void onModuleInserted(int position) {
+        adapter.notifyItemInserted(position);
+    }
+
+    @Override
+    public void onModuleRemoved(int position) {
+        adapter.notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onModuleUpdate(int position) {
+        adapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void onModulesSwap(int from, int to) {
+        adapter.notifyItemChanged(from);
+        adapter.notifyItemChanged(to);
     }
 }
