@@ -40,8 +40,8 @@ public class ModuleDebugViewModel extends AndroidViewModel {
         return actionModuleModel.insertModule(module);
     }
 
-    public LiveData<List<OperatePage>> getAllOperatePageLiveData(){
-        return pageModel.getOperatePageLiveData();
+    public LiveData<List<OperatePage>> getAllOperatePageLiveData(long profileId){
+        return pageModel.getOperatePageLiveData(profileId);
     }
 
     public long insertPage(OperatePage page){

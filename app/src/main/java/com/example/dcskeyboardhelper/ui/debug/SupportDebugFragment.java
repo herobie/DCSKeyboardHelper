@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.BaseFragment;
 import com.example.dcskeyboardhelper.databinding.FragmentSupportBinding;
-import com.example.dcskeyboardhelper.model.adapter.SupportAdapter;
+import com.example.dcskeyboardhelper.model.adapter.SupportDebugAdapter;
 import com.example.dcskeyboardhelper.model.bean.SupportItemData;
 import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 
@@ -22,7 +22,7 @@ public class SupportDebugFragment extends BaseFragment<FragmentSupportBinding, M
     protected void initParams() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         binding.rvSupport.setLayoutManager(layoutManager);
-        SupportAdapter adapter = new SupportAdapter(getContext());
+        SupportDebugAdapter adapter = new SupportDebugAdapter(getContext());
         binding.rvSupport.setAdapter(adapter);
 
         viewModel.getStatusDisplayed().observe(this, new Observer<List<SupportItemData>>() {

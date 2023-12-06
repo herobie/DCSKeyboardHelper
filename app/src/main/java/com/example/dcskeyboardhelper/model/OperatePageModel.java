@@ -24,11 +24,11 @@ public class OperatePageModel extends BaseModel {
         operatePageDao = userDataBase.getOperatePageDao();
     }
 
-    public LiveData<List<OperatePage>> getOperatePageLiveData(){
+    public LiveData<List<OperatePage>> getOperatePageLiveData(long profileId){
         Future<LiveData<List<OperatePage>>> future = executorService.submit(new Callable<LiveData<List<OperatePage>>>() {
             @Override
             public LiveData<List<OperatePage>> call() throws Exception {
-                return operatePageDao.getOperatePageLiveData();
+                return operatePageDao.getOperatePageLiveData(profileId);
             }
         });
 
@@ -40,11 +40,11 @@ public class OperatePageModel extends BaseModel {
         }
     }
 
-    public List<OperatePage> getOperatePage(){
+    public List<OperatePage> getOperatePage(long profileId){
         Future<List<OperatePage>> future = executorService.submit(new Callable<List<OperatePage>>() {
             @Override
             public List<OperatePage> call() throws Exception {
-                return operatePageDao.getOperatePage();
+                return operatePageDao.getOperatePage(profileId);
             }
         });
 

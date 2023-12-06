@@ -12,11 +12,11 @@ import java.util.List;
 
 @Dao
 public interface OperatePageDao {
-    @Query("SELECT * FROM OperatePage ORDER BY pageId ASC")
-    LiveData<List<OperatePage>> getOperatePageLiveData();//获取全部page的livedata
+    @Query("SELECT * FROM OperatePage WHERE parentId=:parentId ORDER BY pageId ASC")
+    LiveData<List<OperatePage>> getOperatePageLiveData(long parentId);//获取全部page的livedata
 
-    @Query("SELECT * FROM OperatePage ORDER BY pageId ASC")
-    List<OperatePage> getOperatePage();//获取全部
+    @Query("SELECT * FROM OperatePage WHERE parentId=:parentId  ORDER BY pageId ASC")
+    List<OperatePage> getOperatePage(long parentId);//获取全部
 
     @Insert
     long insertPage(OperatePage page);

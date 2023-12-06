@@ -1,5 +1,6 @@
 package com.example.dcskeyboardhelper.ui.debug;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -35,6 +35,7 @@ import java.util.Objects;
 
 public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, ModuleDebugViewModel>
         implements View.OnClickListener {
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void initParams() {
         Intent intent = getIntent();
@@ -55,27 +56,24 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
         binding.ibPrev.setOnClickListener(this);
 
         viewModel.setFragmentManager(getSupportFragmentManager());
-        viewModel.setOperatePageAdapter(new FragmentsAdapter<OperatePageDebugFragment>(viewModel.getFragmentManager(),
+        viewModel.setOperatePageAdapter(new FragmentsAdapter<>(viewModel.getFragmentManager(),
                 getLifecycle(), null));
 
         //监控OperatePage类
-        viewModel.getAllOperatePageLiveData().observe(this, new Observer<List<OperatePage>>() {
-            @Override
-            public void onChanged(List<OperatePage> operatePages) {
-                if (binding.vpTac.getAdapter() == null){
-                    binding.vpTac.setAdapter(viewModel.getOperatePageAdapter());
-                }
-                //如果operatePage有数据，那么new对应数量的fragment出来，并给adapter设置数据源
-                if (operatePages != null){
-                    List<OperatePageDebugFragment> fragments = new ArrayList<>();
-                    for (OperatePage page : operatePages){
-                        fragments.add(new OperatePageDebugFragment(viewModel, page));
-                    }
-                    viewModel.getOperatePageAdapter().setFragments(fragments);
-                    binding.vpTac.setAdapter(viewModel.getOperatePageAdapter());
-                }
-                binding.vpTac.getAdapter().notifyDataSetChanged();
+        viewModel.getAllOperatePageLiveData(Constant.CURRENT_PROFILE_ID).observe(this, operatePages -> {
+            if (binding.vpTac.getAdapter() == null){
+                binding.vpTac.setAdapter(viewModel.getOperatePageAdapter());
             }
+            //如果operatePage有数据，那么new对应数量的fragment出来，并给adapter设置数据源
+            if (operatePages != null){
+                List<OperatePageDebugFragment> fragments = new ArrayList<>();
+                for (OperatePage page : operatePages){
+                    fragments.add(new OperatePageDebugFragment(viewModel, page));
+                }
+                viewModel.getOperatePageAdapter().setFragments(fragments);
+                binding.vpTac.setAdapter(viewModel.getOperatePageAdapter());
+            }
+            binding.vpTac.getAdapter().notifyDataSetChanged();
         });
 
         binding.vpTac.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
@@ -99,8 +97,7 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
 
         List<Fragment> supportFragments = new ArrayList<>();
         supportFragments.add(new SupportDebugFragment(viewModel));
-        binding.vpSupport.setAdapter(new FragmentsAdapter(viewModel.getFragmentManager(), getLifecycle(), supportFragments));
-
+        binding.vpSupport.setAdapter(new FragmentsAdapter<>(viewModel.getFragmentManager(), getLifecycle(), supportFragments));
     }
 
     @Override

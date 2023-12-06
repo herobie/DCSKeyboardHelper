@@ -13,11 +13,13 @@ public class MainViewModel extends BaseViewModel {
     private String serverIP;
     private int port;
     private Client client;
-    private MutableLiveData<Integer> connectionStatus = new MutableLiveData<>();
+    private final MutableLiveData<Integer> connectionStatus = new MutableLiveData<>();
     private FragmentManager fragmentManager;
     public MainViewModel(@NonNull Application application) {
         super(application);
         connectionStatus.setValue(0);//设置为未连接状态
+        client = Client.getInstance(connectionStatus);
+        client.useDefaultConfig();
     }
 
     public int getPort() {
@@ -49,12 +51,12 @@ public class MainViewModel extends BaseViewModel {
     }
 
     //创建客户端
-    public void createClient() {
+    public void createConnection() {
         if (client == null){
-            this.client = new Client(serverIP, port, connectionStatus, true);
-        }else {
-            client.init();//（一般发生在连接失败时）如果已经存在client，则重新加载一遍socket
+            client = Client.getInstance(connectionStatus);
+            client.setNetworkAttr(serverIP, port);
         }
+        client.init();
     }
 
     public MutableLiveData<Integer> getConnectionStatus() {

@@ -5,7 +5,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -18,7 +17,7 @@ import com.example.dcskeyboardhelper.model.adapter.DebugButtonAdapter;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
 import com.example.dcskeyboardhelper.model.bean.SupportItemData;
-import com.example.dcskeyboardhelper.ui.OnModuleChangeListener;
+import com.example.dcskeyboardhelper.ui.listeners.OnModuleChangeListener;
 import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 import com.example.dcskeyboardhelper.viewModel.OperatePageViewModel;
 
@@ -142,7 +141,7 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
     }
 
     @Override
-    public void onStepChange(int currentStep) {
+    public void onStepChange(ActionModule module, int currentStep) {
 
     }
 

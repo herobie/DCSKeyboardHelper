@@ -126,6 +126,13 @@
                     android:layout_weight="1"
                     android:text="@string/step"
                     android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/rb_click"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/click" />
             </RadioGroup>
 
             <CheckBox

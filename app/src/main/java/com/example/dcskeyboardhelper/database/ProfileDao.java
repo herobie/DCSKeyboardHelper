@@ -11,7 +11,7 @@ import java.util.List;
 
 @Dao
 public interface ProfileDao {
-    @Query("SELECT * FROM Profile ORDER BY id DESC")
+    @Query("SELECT * FROM Profile ORDER BY id ASC")
     LiveData<List<Profile>> queryAll();//获取全部
 
     @Insert

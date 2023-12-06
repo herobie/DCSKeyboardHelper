@@ -30,11 +30,17 @@ public class ConnectDialog extends BaseDialogFragment<DialogConnectionBinding, M
             @Override
             public void onClick(View v) {
                 String serverIp = Objects.requireNonNull(binding.edServerIp.getEditText()).getText().toString();
-                int port = Integer.parseInt(Objects.requireNonNull(binding.edPort.getEditText()).getText().toString());
+                int port;
+                if (!Objects.requireNonNull(binding.edPort.getEditText()).getText().toString().isEmpty()){
+                    port = Integer.parseInt(Objects.requireNonNull(binding.edPort.getEditText()).getText().toString());
+                }else {
+                    Toast.makeText(getContext(), R.string.require_port, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 viewModel.setServerIP(serverIp);
                 viewModel.setPort(port);
-                viewModel.createClient();
-                Toast.makeText(getContext(), getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
+                viewModel.createConnection();
+                Toast.makeText(getContext(), R.string.operate_success, Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         });

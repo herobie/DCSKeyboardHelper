@@ -40,6 +40,10 @@
             android:name=".ui.simulate.SimulateActivity"
             android:exported="true"
             android:screenOrientation="landscape"/>
+        <service
+            android:name=".model.socket.ConnectService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

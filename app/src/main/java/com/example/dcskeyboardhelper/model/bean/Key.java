@@ -1,5 +1,6 @@
 package com.example.dcskeyboardhelper.model.bean;
 
+//按键名及其对应的KeyEvent编码
 public class Key {
     private String name;
     private int code;

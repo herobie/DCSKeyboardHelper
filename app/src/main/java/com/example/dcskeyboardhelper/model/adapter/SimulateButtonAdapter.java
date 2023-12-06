@@ -1,13 +1,8 @@
 package com.example.dcskeyboardhelper.model.adapter;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -18,18 +13,17 @@ import com.example.dcskeyboardhelper.base.BaseAdapter;
 import com.example.dcskeyboardhelper.databinding.ItemActionButtonBinding;
 import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
-import com.example.dcskeyboardhelper.ui.listeners.OnModuleChangeListener;
-import com.example.dcskeyboardhelper.ui.dialog.ModuleUpdateDialog;
+import com.example.dcskeyboardhelper.ui.listeners.OnModuleChangeBasicListener;
 import com.example.dcskeyboardhelper.viewModel.OperatePageViewModel;
 
 import java.util.List;
 
-public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, OperatePageViewModel>{
+public class SimulateButtonAdapter extends BaseAdapter<ItemActionButtonBinding, OperatePageViewModel> {
     private List<ActionModule> modules;
     private final Context context;
-    private OnModuleChangeListener onModuleChangeListener;
+    private OnModuleChangeBasicListener onModuleChangeBasicListener;
 
-    public DebugButtonAdapter(OperatePageViewModel viewModel, Context context) {
+    public SimulateButtonAdapter(OperatePageViewModel viewModel, Context context) {
         super(viewModel);
         this.context = context;
     }
@@ -39,69 +33,17 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        Log.d("MainActivity", "onBindViewHolder: ");
-        binding.tvActionName.setText(modules.get(holder.getAdapterPosition()).getTitle());
-        binding.cbStar.setChecked(modules.get(holder.getAdapterPosition()).isStarred());
+        binding.ibSetting.setVisibility(View.GONE);
+        binding.ibRemove.setVisibility(View.GONE);
 
-        //将指针指向默认步骤处
-//        initDefaultIndicator(modules.get(position), binding.stepIndicatorContainer);
+        binding.tvActionName.setText(modules.get(position).getTitle());
+        binding.cbStar.setChecked(modules.get(position).isStarred());
 
-        binding.cbStar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonView.isPressed()){
-                    ActionModule actionModule = modules.get(holder.getAdapterPosition());
-                    actionModule.setStarred(isChecked);
-                    actionModule.setCurrentStep(0);//这里把步骤指针重置为0.避免后面显示错乱了
-                    viewModel.updateModule(actionModule);
-                    onModuleChangeListener.onStarChange(modules.get(holder.getAdapterPosition()), isChecked);
-                }
-            }
-        });
-
-        binding.ibSetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ModuleUpdateDialog updateDialog = new ModuleUpdateDialog(context, viewModel,
-                        modules.get(holder.getAdapterPosition()));
-                updateDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        if (updateDialog.isUpdate()){
-                            onModuleChangeListener.onModuleUpdate(holder.getAdapterPosition(), updateDialog.getModule());
-                            notifyItemChanged(holder.getAdapterPosition());
-                        }
-                    }
-                });
-                updateDialog.show();
-            }
-        });
-
-        binding.ibRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context)
-                        .setTitle(context.getString(R.string.warning))
-                        .setMessage(context.getString(R.string.confirm_operate));
-                alertBuilder.setPositiveButton(context.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //删除时，如果这是一个星标的按钮，那么会先取消其星标（目的在于将左侧Support栏的信息清除）
-                        if (modules.get(holder.getAdapterPosition()).isStarred()){
-                            onModuleChangeListener.onStarChange(modules.get(holder.getAdapterPosition()), false);
-                        }
-                        onModuleChangeListener.onModuleRemoved(holder.getAdapterPosition());
-                    }
-                });
-                alertBuilder.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alertBuilder.show();
+        binding.cbStar.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonView.isPressed()){
+                onModuleChangeBasicListener.onStarChange(modules.get(position), isChecked);
             }
         });
 
@@ -117,7 +59,7 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
                 }else if (switchMode == Constant.LOOP){
                     loop(module, container);
                 }
-                onModuleChangeListener.onStepChange(module, module.getCurrentStep());
+                onModuleChangeBasicListener.onStepChange(module, module.getCurrentStep());
             }
         });
     }
@@ -185,24 +127,8 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
         }
     }
 
-    private void initDefaultIndicator(ActionModule module, LinearLayout container){
-        for (int i = 0; i < module.getDefaultStep(); i++){
-            View view = new View(context);
-            view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    measureIndicatorWeight(container, module.getStepsNum())));
-            view.setBackgroundResource(R.color.grey_light);
-            view.setAlpha(0.5f);
-            container.addView(view);
-            Log.d("MainActivity", "ContainerChildCount:" + container.getChildCount());
-        }
-    }
-
     private int measureIndicatorWeight(LinearLayout container, int stepSum){
         return container.getMeasuredHeight() / ( stepSum - 1 );
-    }
-
-    public List<ActionModule> getModules() {
-        return modules;
     }
 
     @Override
@@ -212,10 +138,10 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
 
     @Override
     public int getItemCount() {
-        return modules == null? 0: modules.size();
+        return modules == null? 0 : modules.size();
     }
 
-    public void setOnModuleChangeListener(OnModuleChangeListener onModuleChangeListener) {
-        this.onModuleChangeListener = onModuleChangeListener;
+    public void setOnModuleChangeBasicListener(OnModuleChangeBasicListener onModuleChangeBasicListener) {
+        this.onModuleChangeBasicListener = onModuleChangeBasicListener;
     }
 }

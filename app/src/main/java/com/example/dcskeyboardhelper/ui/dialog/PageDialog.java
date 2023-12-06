@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.BaseDialog;
 import com.example.dcskeyboardhelper.databinding.DialogInsertPageBinding;
+import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
 import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 
@@ -29,8 +30,7 @@ public class PageDialog extends BaseDialog<DialogInsertPageBinding> {
             @Override
             public void onClick(View v) {
                 String pageName = Objects.requireNonNull(binding.edPageTitle.getEditText()).getText().toString();
-                // TODO: 2023/11/23 使用的是默认的0号parentId
-                viewModel.insertPage(new OperatePage(0, pageName));
+                viewModel.insertPage(new OperatePage(Constant.CURRENT_PROFILE_ID, pageName));
                 Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
                 dismiss();
             }
