@@ -15,11 +15,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class OperatePageModel extends BaseModel {
-    private OperatePageDao operatePageDao;
-    private Context context;
+    private final OperatePageDao operatePageDao;
 
     public OperatePageModel(Context context) {
-        this.context = context;
         UserDatabase userDataBase = UserDatabase.getInstance(context.getApplicationContext());
         operatePageDao = userDataBase.getOperatePageDao();
     }
@@ -73,11 +71,10 @@ public class OperatePageModel extends BaseModel {
     }
 
     public void deletePage(long id){
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                operatePageDao.deletePage(id);
-            }
-        });
+        executorService.submit(() -> operatePageDao.deletePage(id));
+    }
+
+    public void updatePage(OperatePage...pages){
+        executorService.submit(() -> operatePageDao.updatePage(pages));
     }
 }

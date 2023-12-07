@@ -12,6 +12,8 @@ public class OperatePage {
     private long parentId;//页面所属存档配置的id
     @ColumnInfo
     private String pageName;//页面名称
+    @ColumnInfo
+    private int position;//页面排序
 
     public OperatePage(long parentId, String pageName) {
         this.parentId = parentId;
@@ -40,5 +42,13 @@ public class OperatePage {
 
     public void setPageName(String pageName) {
         this.pageName = pageName;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

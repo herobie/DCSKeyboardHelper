@@ -8,10 +8,7 @@ import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.BaseFragment;
 import com.example.dcskeyboardhelper.databinding.FragmentSupportBinding;
 import com.example.dcskeyboardhelper.model.adapter.SupportDebugAdapter;
-import com.example.dcskeyboardhelper.model.bean.SupportItemData;
 import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
-
-import java.util.List;
 
 public class SupportDebugFragment extends BaseFragment<FragmentSupportBinding, ModuleDebugViewModel> {
     public SupportDebugFragment(ModuleDebugViewModel viewModel) {
@@ -22,15 +19,17 @@ public class SupportDebugFragment extends BaseFragment<FragmentSupportBinding, M
     protected void initParams() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         binding.rvSupport.setLayoutManager(layoutManager);
-        SupportDebugAdapter adapter = new SupportDebugAdapter(getContext());
+        SupportDebugAdapter adapter = new SupportDebugAdapter();
         binding.rvSupport.setAdapter(adapter);
+        viewModel.setSupportDebugAdapter(adapter);
 
-        viewModel.getStatusDisplayed().observe(this, new Observer<List<SupportItemData>>() {
+        viewModel.getIsStarredModulesReady().observe(this, new Observer<Boolean>() {
             @Override
-            public void onChanged(List<SupportItemData> supportItemData) {
-                adapter.setStatus(supportItemData);
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) adapter.setModules(viewModel.getStarredModules());
             }
         });
+
     }
 
     @Override

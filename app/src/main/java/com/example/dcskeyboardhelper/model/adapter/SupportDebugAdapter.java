@@ -1,7 +1,6 @@
 package com.example.dcskeyboardhelper.model.adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,34 +8,32 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.SuperBaseAdapter;
 import com.example.dcskeyboardhelper.databinding.ItemSupportBinding;
-import com.example.dcskeyboardhelper.model.bean.SupportItemData;
+import com.example.dcskeyboardhelper.model.bean.ActionModule;
 
 import java.util.List;
 
 public class SupportDebugAdapter extends SuperBaseAdapter<ItemSupportBinding> {
-    private List<SupportItemData> status;
-    private Context context;
+    private List<ActionModule> modules;
 
-    public SupportDebugAdapter(Context context) {
-        this.context = context;
+    public SupportDebugAdapter() {
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void setStatus(List<SupportItemData> status) {
-        this.status = status;
+    public void setModules(List<ActionModule> modules) {
+        this.modules = modules;
         notifyDataSetChanged();
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        if (status != null && !status.isEmpty()){
-            binding.tvSupportTitle.setText(status.get(position).getTitle());
-            int currentStep = status.get(position).getCurrentStep();
-            if (status.get(position).getActions() != null && !status.get(position).getActions().isEmpty()){
-                String stepDesc = status.get(position).getActions().get(currentStep).getName();
-                binding.tvSupportStatus.setText(stepDesc);
-            }
+        ActionModule module = modules.get(position);
+        int currentStep = module.getCurrentStep();
+        binding.tvSupportTitle.setText(module.getDesc());
+        try {
+            binding.tvSupportStatus.setText(module.getActions().get(currentStep).getName());//如果没有设置步骤则这里可能有指针越界问题
+        }catch (IndexOutOfBoundsException ignored){
         }
 
     }
@@ -48,6 +45,10 @@ public class SupportDebugAdapter extends SuperBaseAdapter<ItemSupportBinding> {
 
     @Override
     public int getItemCount() {
-        return status == null? 0:status.size();
+        return modules == null? 0:modules.size();
+    }
+
+    public List<ActionModule> getModules() {
+        return modules;
     }
 }

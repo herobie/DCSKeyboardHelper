@@ -21,11 +21,14 @@ import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.BaseActivity;
 import com.example.dcskeyboardhelper.databinding.ActivitySimulateBinding;
 import com.example.dcskeyboardhelper.model.Constant;
+import com.example.dcskeyboardhelper.model.adapter.DebugButtonAdapter;
 import com.example.dcskeyboardhelper.model.adapter.FragmentsAdapter;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
 import com.example.dcskeyboardhelper.ui.dialog.ModuleInsertDialog;
 import com.example.dcskeyboardhelper.ui.dialog.PageDialog;
+import com.example.dcskeyboardhelper.ui.dialog.SortPagesDialog;
+import com.example.dcskeyboardhelper.ui.simulate.OperatePageFragment;
 import com.example.dcskeyboardhelper.util.PopupWindowUtil;
 import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 
@@ -60,7 +63,14 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                 getLifecycle(), null));
 
         //监控OperatePage类
+        // TODO: 2023/12/7 检查一下这个Observe
         viewModel.getAllOperatePageLiveData(Constant.CURRENT_PROFILE_ID).observe(this, operatePages -> {
+            int index = 0;
+            for (OperatePage page : operatePages){
+                page.setPosition(index);
+                index++;
+            }
+            viewModel.setPages(operatePages);
             if (binding.vpTac.getAdapter() == null){
                 binding.vpTac.setAdapter(viewModel.getOperatePageAdapter());
             }
@@ -188,6 +198,20 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                 });
                 alertBuilder.show();
                 break;
+            case R.id.update_page://更新页面
+                if (viewModel.getPages() == null){
+                    break;
+                }
+                SortPagesDialog sortPagesDialog = new SortPagesDialog(this, viewModel.getPages());
+                sortPagesDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if (sortPagesDialog.getPages() != null){
+                            viewModel.updatePage(sortPagesDialog.getPages().toArray(new OperatePage[0]));
+                        }
+                    }
+                });
+                sortPagesDialog.show();
         }
         return true;
     }
@@ -213,6 +237,21 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                     binding.vpTac.setCurrentItem(currentPosition + 1);
                 }
                 break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //数据库更新位置坐标
+        for (OperatePageDebugFragment fragment : viewModel.getOperatePageAdapter().getFragments()){
+            DebugButtonAdapter adapter = fragment.getAdapter();
+            if (adapter != null){
+                for (int i = 0; i < adapter.getModules().size(); i++){
+                    adapter.getModules().get(i).setGridPosition(i);
+                }
+                viewModel.updateModule(adapter.getModules().toArray(new ActionModule[0]));
+            }
         }
     }
 }

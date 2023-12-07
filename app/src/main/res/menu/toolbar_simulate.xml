@@ -6,4 +6,10 @@
         android:icon="@drawable/ic_baseline_bug_report_24"
         android:title="@string/debug_mode"
         app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/pages_skip"
+        android:icon="@drawable/ic_baseline_arrow_drop_down_24"
+        android:title="@string/pages_skip"
+        app:showAsAction="ifRoom"/>
 </menu>

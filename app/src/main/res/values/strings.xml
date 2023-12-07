@@ -4,7 +4,9 @@
     <string name="connect_server">寻找服务端</string>
     <string name="start_simulation">开始模拟</string>
     <string name="debug_mode">调试模式</string>
+    <string name="pages_skip">页面跳转</string>
     <string name="disconnect">断开连接</string>
+    <string name="use_default_ip_config">使用默认ip设置</string>
 
     <string name="device_no_connect">服务端未连接</string>
     <string name="device_connected">服务端已连接</string>
@@ -48,7 +50,9 @@
     <string name="add_button">添加按钮</string>
     <string name="add_action">添加操作</string>
     <string name="delete_page">删除页面</string>
+    <string name="update_page">设置页面</string>
     <string name="save">保存</string>
+    <string name="sort_pages">调整页面顺序</string>
 
     <string name="previous">上一个</string>
     <string name="next">下一个</string>
@@ -75,6 +79,7 @@
     
     <string name="action_step_placeholder">步骤1</string>
     <string name="action_step_placeholder_no_number">步骤</string>
+    <string name="default_placeholder">默认</string>
     <string name="action_desc_placeholder">开</string>
     <string name="action_placeholder">R_Alt</string>
     <string name="action_title_placeholder">自动驾驶</string>

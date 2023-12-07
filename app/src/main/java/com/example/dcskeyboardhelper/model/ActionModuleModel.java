@@ -3,26 +3,20 @@ package com.example.dcskeyboardhelper.model;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-
 import com.example.dcskeyboardhelper.base.BaseModel;
 import com.example.dcskeyboardhelper.database.ActionModuleDao;
 import com.example.dcskeyboardhelper.database.UserDatabase;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
-import com.example.dcskeyboardhelper.model.bean.SupportItemData;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class ActionModuleModel extends BaseModel {
-    private ActionModuleDao actionModuleDao;
-    private Context context;
+    private final ActionModuleDao actionModuleDao;
 
     public ActionModuleModel(Context context) {
-        this.context = context;
         UserDatabase userDataBase = UserDatabase.getInstance(context.getApplicationContext());
         actionModuleDao = userDataBase.getActionModuleDao();
     }
@@ -100,15 +94,6 @@ public class ActionModuleModel extends BaseModel {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public List<SupportItemData> getSupportData(){
-        List<SupportItemData> list = new ArrayList<>();
-        for (ActionModule module : getStarredModule()){
-            SupportItemData supportItemData = new SupportItemData(module.getId(), module.getDesc(), module.getActions());
-            list.add(supportItemData);
-        }
-        return list;
     }
 
     //当发生模块交换位置时调用，用于更新模块位置数据

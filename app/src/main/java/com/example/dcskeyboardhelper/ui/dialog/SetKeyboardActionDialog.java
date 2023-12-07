@@ -125,6 +125,7 @@ public class SetKeyboardActionDialog extends Dialog implements KeysAdapter.KeySe
                 return action;
             }
             action.setCodes(codes);
+            action.setName(name);
             return action;
         }
         return null;//只有按确认键才能获取key

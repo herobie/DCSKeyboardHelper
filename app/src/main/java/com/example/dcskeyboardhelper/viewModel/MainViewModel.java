@@ -19,7 +19,6 @@ public class MainViewModel extends BaseViewModel {
         super(application);
         connectionStatus.setValue(0);//设置为未连接状态
         client = Client.getInstance(connectionStatus);
-        client.useDefaultConfig();
     }
 
     public int getPort() {

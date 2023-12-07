@@ -49,6 +49,8 @@ public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBindi
             binding.rbStep.setChecked(true);
         }else if (Constant.LOOP == module.getSwitchMode()){
             binding.rbLoop.setChecked(true);
+        }else if (Constant.CLICK == module.getSwitchMode()){
+            binding.rbClick.setChecked(true);
         }
 
         binding.btnInsertCancel.setOnClickListener(this);

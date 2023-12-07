@@ -16,8 +16,8 @@ import com.example.dcskeyboardhelper.databinding.FragmentOperateBinding;
 import com.example.dcskeyboardhelper.model.adapter.DebugButtonAdapter;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
-import com.example.dcskeyboardhelper.model.bean.SupportItemData;
 import com.example.dcskeyboardhelper.ui.listeners.OnModuleChangeListener;
+import com.example.dcskeyboardhelper.ui.listeners.OnSupportItemChangeListener;
 import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 import com.example.dcskeyboardhelper.viewModel.OperatePageViewModel;
 
@@ -25,10 +25,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBinding, OperatePageViewModel>
-        implements OnModuleChangeListener{
-    private OperatePage operatePage;
+        implements OnModuleChangeListener, OnSupportItemChangeListener {
+    private final OperatePage operatePage;
     private DebugButtonAdapter adapter;
-    private ModuleDebugViewModel moduleDebugViewModel;
+    private final ModuleDebugViewModel moduleDebugViewModel;
     public OperatePageDebugFragment(ModuleDebugViewModel moduleDebugViewMode, OperatePage operatePage) {
         this.operatePage = operatePage;
         this.moduleDebugViewModel = moduleDebugViewMode;
@@ -36,7 +36,6 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
 
     @Override
     protected void initParams() {
-        // TODO: 2023/11/22 rv
         binding.tvPagePlaceholder.setText(operatePage.getPageName());
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 5);
@@ -56,8 +55,8 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
                                   @NonNull RecyclerView.ViewHolder target) {
-                int fromPosition = viewHolder.getLayoutPosition();
-                int targetPosition = target.getLayoutPosition();
+                int fromPosition = viewHolder.getAdapterPosition();
+                int targetPosition = target.getAdapterPosition();
                 if (adapter != null){
                     onModulesSwap(fromPosition, targetPosition);
                     return true;
@@ -80,6 +79,12 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
 
         List<ActionModule> modules = viewModel.getAllModules(operatePage.getPageId());
         adapter.setModules(modules);
+        for (ActionModule module : modules){//将星标module加入集合
+            if (module.isStarred()){
+                moduleDebugViewModel.getStarredModules().add(module);
+            }
+        }
+        moduleDebugViewModel.getIsStarredModulesReady().setValue(true);
         onInitModules();
     }
 
@@ -111,6 +116,7 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
         return adapter.getModules();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onInitModules() {
         Log.d("MainActivity", "onInitModules: ");
@@ -120,29 +126,36 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
     @Override
     public void onStarChange(ActionModule module, boolean isStarred) {
         Log.d("MainActivity", "onStarChange: ");
-        List<SupportItemData> list = moduleDebugViewModel.getStatusDisplayed().getValue();
-        if (list != null){
-            if (isStarred){
-                SupportItemData supportItemData = new SupportItemData(module.getId(), module.getDesc(),
-                        module.getActions(), module.getCurrentStep());
-                list.add(supportItemData);
-            }else {
-                int index = 0;
-                for (SupportItemData supportItemData : list){
-                    if (supportItemData.getModuleId() == module.getId()){
-                        list.remove(index);
-                        break;
-                    }
-                    index++;
-                }
-            }
-            moduleDebugViewModel.getStatusDisplayed().postValue(list);
+        module.setStarred(isStarred);
+        module.setCurrentStep(0);//这里把步骤指针重置为0.避免后面显示错乱了
+        viewModel.updateModule(module);
+        if (isStarred){
+            onSupportItemInsert(module);
+            return;
         }
+        int index = 0;
+        for (ActionModule actionModule : moduleDebugViewModel.getStarredModules()){
+            if (actionModule.getId() == module.getId()){
+                break;
+            }
+            index++;
+        }
+        onSupportItemRemove(index);
     }
 
     @Override
     public void onStepChange(ActionModule module, int currentStep) {
-
+        if (module.isStarred()){
+            //在support的显示item集合里找到module
+            int index = 0;
+            for (ActionModule m : moduleDebugViewModel.getStarredModules()){
+                if (m.getId() == module.getId()){
+                    break;
+                }
+                index++;
+            }
+            onSupportItemStep(module, index);
+        }
     }
 
     @Override
@@ -161,15 +174,26 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
         adapter.getModules().add(position, module);
         adapter.notifyItemInserted(position);
         viewModel.insertModule(module);
+        onSupportItemInsert(module);
     }
 
     @Override
     public void onModuleRemoved(int position) {
-        viewModel.deleteModule(adapter.getModules().get(position).getId());
-        if (adapter.getModules() != null){
-            adapter.getModules().remove(position);
-            adapter.notifyItemRemoved(position);
+        ActionModule module = adapter.getModules().get(position);
+        viewModel.deleteModule(module.getId());
+        adapter.getModules().remove(position);
+        adapter.notifyItemRemoved(position);
+        if (module.isStarred()){
+            int index = 0;
+            for (ActionModule m : moduleDebugViewModel.getStarredModules()){
+                if (m.getId() == module.getId()){
+                    onSupportItemRemove(index);
+                    break;
+                }
+                index++;
+            }
         }
+
     }
 
     @Override
@@ -186,10 +210,34 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
         //刷新adapter
         Collections.swap(adapter.getModules(), from, to);
         adapter.notifyItemMoved(from, to);
-        //数据库更新位置坐标
-        for (int i = 0; i < adapter.getModules().size(); i++){
-            adapter.getModules().get(i).setGridPosition(i);
+    }
+
+    @Override
+    public void onSupportItemInsert(ActionModule module) {
+        if (moduleDebugViewModel.getSupportDebugAdapter() == null){
+            return;
         }
-        viewModel.updateModule(adapter.getModules().toArray(new ActionModule[0]));
+        List<ActionModule> modules = moduleDebugViewModel.getStarredModules();
+        modules.add(module);
+        moduleDebugViewModel.getSupportDebugAdapter().notifyItemInserted(modules.size());
+    }
+
+    @Override
+    public void onSupportItemRemove(int position) {
+        if (moduleDebugViewModel.getSupportDebugAdapter() == null){
+            return;
+        }
+        List<ActionModule> modules = moduleDebugViewModel.getStarredModules();
+        modules.remove(position);
+        moduleDebugViewModel.getSupportDebugAdapter().notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onSupportItemStep(ActionModule module, int position) {
+        moduleDebugViewModel.getSupportDebugAdapter().notifyItemChanged(position);
+    }
+
+    public DebugButtonAdapter getAdapter() {
+        return adapter;
     }
 }

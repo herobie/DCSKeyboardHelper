@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListPopupWindow;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +31,7 @@ import com.example.dcskeyboardhelper.model.socket.Client;
 import com.example.dcskeyboardhelper.model.socket.ConnectService;
 import com.example.dcskeyboardhelper.ui.debug.OperatePageDebugFragment;
 import com.example.dcskeyboardhelper.ui.debug.SupportDebugFragment;
+import com.example.dcskeyboardhelper.util.PopupWindowUtil;
 import com.example.dcskeyboardhelper.viewModel.SimulateViewModel;
 
 import java.util.ArrayList;
@@ -128,6 +132,22 @@ public class SimulateActivity extends BaseActivity<ActivitySimulateBinding, Simu
                     }
                 }
                 break;
+            case R.id.pages_skip://页面快速跳转功能
+                List<String> pageNames = new ArrayList<>();
+                for (OperatePage page : viewModel.getOperatePage()){
+                    pageNames.add(page.getPageName());
+                }
+                View view = findViewById(item.getItemId());
+                ListPopupWindow pageWindow = PopupWindowUtil.initPopupWindow(view , this, pageNames, 250,
+                        ListPopupWindow.WRAP_CONTENT, null);
+                pageWindow.setHorizontalOffset(-75);
+                pageWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        binding.vpTac.setCurrentItem(position);
+                    }
+                });
+                pageWindow.show();
         }
         return true;
     }

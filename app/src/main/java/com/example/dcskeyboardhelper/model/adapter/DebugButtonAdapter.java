@@ -3,11 +3,9 @@ package com.example.dcskeyboardhelper.model.adapter;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -18,8 +16,8 @@ import com.example.dcskeyboardhelper.base.BaseAdapter;
 import com.example.dcskeyboardhelper.databinding.ItemActionButtonBinding;
 import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
-import com.example.dcskeyboardhelper.ui.listeners.OnModuleChangeListener;
 import com.example.dcskeyboardhelper.ui.dialog.ModuleUpdateDialog;
+import com.example.dcskeyboardhelper.ui.listeners.OnModuleChangeListener;
 import com.example.dcskeyboardhelper.viewModel.OperatePageViewModel;
 
 import java.util.List;
@@ -48,77 +46,45 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
         //将指针指向默认步骤处
 //        initDefaultIndicator(modules.get(position), binding.stepIndicatorContainer);
 
-        binding.cbStar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonView.isPressed()){
-                    ActionModule actionModule = modules.get(holder.getAdapterPosition());
-                    actionModule.setStarred(isChecked);
-                    actionModule.setCurrentStep(0);//这里把步骤指针重置为0.避免后面显示错乱了
-                    viewModel.updateModule(actionModule);
-                    onModuleChangeListener.onStarChange(modules.get(holder.getAdapterPosition()), isChecked);
+        binding.cbStar.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonView.isPressed()){
+                onModuleChangeListener.onStarChange(modules.get(holder.getAdapterPosition()), isChecked);
+            }
+        });
+
+        binding.ibSetting.setOnClickListener(v -> {
+            ModuleUpdateDialog updateDialog = new ModuleUpdateDialog(context, viewModel,
+                    modules.get(holder.getAdapterPosition()));
+            updateDialog.setOnDismissListener(dialog -> {
+                if (updateDialog.isUpdate()){
+                    onModuleChangeListener.onModuleUpdate(holder.getAdapterPosition(), updateDialog.getModule());
+                    notifyItemChanged(holder.getAdapterPosition());
                 }
-            }
+            });
+            updateDialog.show();
         });
 
-        binding.ibSetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ModuleUpdateDialog updateDialog = new ModuleUpdateDialog(context, viewModel,
-                        modules.get(holder.getAdapterPosition()));
-                updateDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        if (updateDialog.isUpdate()){
-                            onModuleChangeListener.onModuleUpdate(holder.getAdapterPosition(), updateDialog.getModule());
-                            notifyItemChanged(holder.getAdapterPosition());
-                        }
-                    }
-                });
-                updateDialog.show();
-            }
+        binding.ibRemove.setOnClickListener(v -> {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context)
+                    .setTitle(R.string.warning)
+                    .setMessage(R.string.confirm_operate);
+            alertBuilder.setPositiveButton(R.string.confirm, (dialog, which) ->
+                    onModuleChangeListener.onModuleRemoved(holder.getAdapterPosition()));
+            alertBuilder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+            alertBuilder.show();
         });
 
-        binding.ibRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context)
-                        .setTitle(context.getString(R.string.warning))
-                        .setMessage(context.getString(R.string.confirm_operate));
-                alertBuilder.setPositiveButton(context.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //删除时，如果这是一个星标的按钮，那么会先取消其星标（目的在于将左侧Support栏的信息清除）
-                        if (modules.get(holder.getAdapterPosition()).isStarred()){
-                            onModuleChangeListener.onStarChange(modules.get(holder.getAdapterPosition()), false);
-                        }
-                        onModuleChangeListener.onModuleRemoved(holder.getAdapterPosition());
-                    }
-                });
-                alertBuilder.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alertBuilder.show();
+        binding.clActionBackground.setOnClickListener(v -> {
+            ActionModule module = modules.get(holder.getAdapterPosition());
+            int switchMode = module.getSwitchMode();
+            //step和loop的container参数不能直接传一个binding.stepIndicatorContainer，怀疑是和dataBinding绑定的viewHolder错乱有关
+            LinearLayout container = holder.itemView.findViewById(R.id.step_indicator_container);
+            if (switchMode == Constant.STEP){
+                step(module, container);
+            }else if (switchMode == Constant.LOOP){
+                loop(module, container);
             }
-        });
-
-        binding.clActionBackground.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActionModule module = modules.get(holder.getAdapterPosition());
-                int switchMode = module.getSwitchMode();
-                //step和loop的container参数不能直接传一个binding.stepIndicatorContainer，怀疑是和dataBinding绑定的viewHolder错乱有关
-                LinearLayout container = holder.itemView.findViewById(R.id.step_indicator_container);
-                if (switchMode == Constant.STEP){
-                    step(module, container);
-                }else if (switchMode == Constant.LOOP){
-                    loop(module, container);
-                }
-                onModuleChangeListener.onStepChange(module, module.getCurrentStep());
-            }
+            onModuleChangeListener.onStepChange(module, module.getCurrentStep());
         });
     }
 

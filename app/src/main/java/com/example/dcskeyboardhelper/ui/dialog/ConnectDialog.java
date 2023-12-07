@@ -37,8 +37,12 @@ public class ConnectDialog extends BaseDialogFragment<DialogConnectionBinding, M
                     Toast.makeText(getContext(), R.string.require_port, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                viewModel.setServerIP(serverIp);
-                viewModel.setPort(port);
+                if (binding.cbDefaultConfig.isChecked()){
+                    viewModel.getClient().useDefaultConfig();
+                }else {
+                    viewModel.setServerIP(serverIp);
+                    viewModel.setPort(port);
+                }
                 viewModel.createConnection();
                 Toast.makeText(getContext(), R.string.operate_success, Toast.LENGTH_SHORT).show();
                 dismiss();

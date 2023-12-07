@@ -9,6 +9,12 @@
         app:showAsAction="always"/>
 
     <item
+        android:id="@+id/update_page"
+        android:title="@string/update_page"
+        android:icon="@drawable/ic_baseline_settings_24"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/delete_page"
         android:title="@string/delete_page"
         android:icon="@drawable/ic_baseline_delete_24"

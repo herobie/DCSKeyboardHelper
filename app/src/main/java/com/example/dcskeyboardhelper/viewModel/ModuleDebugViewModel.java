@@ -11,11 +11,10 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.dcskeyboardhelper.model.ActionModuleModel;
 import com.example.dcskeyboardhelper.model.OperatePageModel;
 import com.example.dcskeyboardhelper.model.adapter.FragmentsAdapter;
+import com.example.dcskeyboardhelper.model.adapter.SupportDebugAdapter;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
-import com.example.dcskeyboardhelper.model.bean.SupportItemData;
 import com.example.dcskeyboardhelper.ui.debug.OperatePageDebugFragment;
-import com.example.dcskeyboardhelper.ui.debug.SupportDebugFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,18 +25,20 @@ public class ModuleDebugViewModel extends AndroidViewModel {
     private final ActionModuleModel actionModuleModel;
     private FragmentManager fragmentManager;
     private FragmentsAdapter<OperatePageDebugFragment> operatePageAdapter;
+    private List<OperatePage> pages;
     private OperatePage currentPage;
-    private final MutableLiveData<List<SupportItemData>> statusDisplayed;//保存左侧support页面的文字
+    private final List<ActionModule> starredModules = new ArrayList<>();
+    private SupportDebugAdapter supportDebugAdapter;
+    private final MutableLiveData<Boolean> isStarredModulesReady = new MutableLiveData<>();
     public ModuleDebugViewModel(@NonNull Application application) {
         super(application);
         pageModel = new OperatePageModel(application);
         actionModuleModel = new ActionModuleModel(application);
-        statusDisplayed = new MutableLiveData<>();
-        statusDisplayed.postValue(getSupportData());
+        isStarredModulesReady.setValue(false);
     }
 
-    public long insertModule(ActionModule module){
-        return actionModuleModel.insertModule(module);
+    public void updateModule(ActionModule...module){
+        actionModuleModel.updateModule(module);
     }
 
     public LiveData<List<OperatePage>> getAllOperatePageLiveData(long profileId){
@@ -51,6 +52,10 @@ public class ModuleDebugViewModel extends AndroidViewModel {
     public void deletePage(long id){
         pageModel.deletePage(id);//先执行删除页面
         actionModuleModel.deleteModuleInPage(id);//再把页面下所有的模块也删除了
+    }
+
+    public void updatePage(OperatePage...pages){
+        pageModel.updatePage(pages);
     }
 
     public FragmentManager getFragmentManager() {
@@ -85,11 +90,27 @@ public class ModuleDebugViewModel extends AndroidViewModel {
         return profileId;
     }
 
-    public List<SupportItemData> getSupportData(){
-        return actionModuleModel.getSupportData();
+    public List<ActionModule> getStarredModules() {
+        return starredModules;
     }
 
-    public MutableLiveData<List<SupportItemData>> getStatusDisplayed() {
-        return statusDisplayed;
+    public SupportDebugAdapter getSupportDebugAdapter() {
+        return supportDebugAdapter;
+    }
+
+    public void setSupportDebugAdapter(SupportDebugAdapter supportDebugAdapter) {
+        this.supportDebugAdapter = supportDebugAdapter;
+    }
+
+    public MutableLiveData<Boolean> getIsStarredModulesReady() {
+        return isStarredModulesReady;
+    }
+
+    public List<OperatePage> getPages() {
+        return pages;
+    }
+
+    public void setPages(List<OperatePage> pages) {
+        this.pages = pages;
     }
 }
