@@ -2,12 +2,10 @@ package com.example.dcskeyboardhelper.ui.debug;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListPopupWindow;
 import android.widget.Toast;
 
@@ -28,7 +26,7 @@ import com.example.dcskeyboardhelper.model.bean.OperatePage;
 import com.example.dcskeyboardhelper.ui.dialog.ModuleInsertDialog;
 import com.example.dcskeyboardhelper.ui.dialog.PageDialog;
 import com.example.dcskeyboardhelper.ui.dialog.SortPagesDialog;
-import com.example.dcskeyboardhelper.ui.simulate.OperatePageFragment;
+import com.example.dcskeyboardhelper.ui.listeners.OperatePageChangeListener;
 import com.example.dcskeyboardhelper.util.PopupWindowUtil;
 import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 
@@ -37,8 +35,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, ModuleDebugViewModel>
-        implements View.OnClickListener {
-    @SuppressLint("NotifyDataSetChanged")
+        implements View.OnClickListener, OperatePageChangeListener {
     @Override
     protected void initParams() {
         Intent intent = getIntent();
@@ -62,37 +59,24 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
         viewModel.setOperatePageAdapter(new FragmentsAdapter<>(viewModel.getFragmentManager(),
                 getLifecycle(), null));
 
-        //监控OperatePage类
-        // TODO: 2023/12/7 检查一下这个Observe
-        viewModel.getAllOperatePageLiveData(Constant.CURRENT_PROFILE_ID).observe(this, operatePages -> {
-            int index = 0;
-            for (OperatePage page : operatePages){
-                page.setPosition(index);
-                index++;
-            }
-            viewModel.setPages(operatePages);
-            if (binding.vpTac.getAdapter() == null){
-                binding.vpTac.setAdapter(viewModel.getOperatePageAdapter());
-            }
-            //如果operatePage有数据，那么new对应数量的fragment出来，并给adapter设置数据源
-            if (operatePages != null){
-                List<OperatePageDebugFragment> fragments = new ArrayList<>();
-                for (OperatePage page : operatePages){
-                    fragments.add(new OperatePageDebugFragment(viewModel, page));
-                }
-                viewModel.getOperatePageAdapter().setFragments(fragments);
-                binding.vpTac.setAdapter(viewModel.getOperatePageAdapter());
-            }
-            binding.vpTac.getAdapter().notifyDataSetChanged();
-        });
+        if (binding.vpTac.getAdapter() == null){
+            binding.vpTac.setAdapter(viewModel.getOperatePageAdapter());
+        }
+        onPageInit();
 
         binding.vpTac.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         binding.vpTac.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                OperatePageDebugFragment operatePageDebugFragment = viewModel.getOperatePageAdapter()
-                        .getFragments().get(position);
+                OperatePageDebugFragment operatePageDebugFragment;
+                try {
+                    operatePageDebugFragment = viewModel.getOperatePageAdapter()
+                            .getFragments().get(position);
+                }catch (IndexOutOfBoundsException e){
+                    return;
+                }
+                if (operatePageDebugFragment == null) return;
                 if (!operatePageDebugFragment.isHidden()){//这里怕出问题，必须是当前显示的fragment才行
                     Constant.CURRENT_PAGE_ID = operatePageDebugFragment.getOperatePage().getPageId();
                     viewModel.setCurrentPage(operatePageDebugFragment.getOperatePage());
@@ -130,6 +114,7 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
         return 0;
     }
 
+    @SuppressLint({"NonConstantResourceId", "NotifyDataSetChanged"})
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         //设置标题栏图标点击事件
@@ -143,35 +128,28 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                         new String[]{getString(R.string.insert_button), getString(R.string.insert_page)},
                         225, ListPopupWindow.WRAP_CONTENT, null);
                 insertWindow.setHorizontalOffset(-100);
-                insertWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (position == 0){
-                            ModuleInsertDialog moduleInsertDialog
-                                    = new ModuleInsertDialog(ModuleDebugActivity.this, viewModel);
-                            moduleInsertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    ActionModule module = moduleInsertDialog.getModule();
-                                    if (module != null){
-                                        int position = binding.vpTac.getCurrentItem();
-                                        viewModel.getOperatePageAdapter().getFragments()
-                                                .get(position).onModuleInserted(module, -1);
-                                    }
-                                }
-                            });
-                            moduleInsertDialog.show();
-                        }else if (position == 1){
-                            PageDialog pageDialog = new PageDialog(ModuleDebugActivity.this, viewModel);
-                            pageDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    Objects.requireNonNull(binding.vpTac.getAdapter())
-                                            .notifyItemInserted(binding.vpTac.getChildCount());
-                                }
-                            });
-                            pageDialog.show();
-                        }
+                insertWindow.setOnItemClickListener((parent, view1, position, id) -> {
+                    if (position == 0){
+                        ModuleInsertDialog moduleInsertDialog
+                                = new ModuleInsertDialog(ModuleDebugActivity.this, viewModel);
+                        moduleInsertDialog.setOnDismissListener(dialog -> {
+
+                            ActionModule module = moduleInsertDialog.getModule();
+                            if (module != null){
+                                int position1 = binding.vpTac.getCurrentItem();
+                                viewModel.getOperatePageAdapter().getFragments()
+                                        .get(position1).onModuleInserted(module, -1);
+                            }
+                        });
+                        moduleInsertDialog.show();
+                    }else if (position == 1){
+                        PageDialog pageDialog = new PageDialog(ModuleDebugActivity.this, viewModel);
+                        pageDialog.setOnDismissListener(dialog -> {
+                            if (pageDialog.getOperatePage() != null){
+                                onPageInsert(pageDialog.getOperatePage());
+                            }
+                        });
+                        pageDialog.show();
                     }
                 });
                 insertWindow.show();
@@ -180,22 +158,9 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this)
                         .setTitle(getString(R.string.warning))
                         .setMessage(getString(R.string.confirm_operate));
-                alertBuilder.setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (Constant.CURRENT_PAGE_ID != -1){//检查一下页面指针出错没有
-                            Toast.makeText(ModuleDebugActivity.this,
-                                    getString(R.string.page_index_error), Toast.LENGTH_SHORT).show();
-                        }
-                        viewModel.deletePage(Constant.CURRENT_PAGE_ID);
-                    }
-                });
-                alertBuilder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                alertBuilder.setPositiveButton(getString(R.string.confirm), (dialog, which) ->
+                        onPageRemove(binding.vpTac.getCurrentItem()));
+                alertBuilder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
                 alertBuilder.show();
                 break;
             case R.id.update_page://更新页面
@@ -203,12 +168,24 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                     break;
                 }
                 SortPagesDialog sortPagesDialog = new SortPagesDialog(this, viewModel.getPages());
-                sortPagesDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        if (sortPagesDialog.getPages() != null){
-                            viewModel.updatePage(sortPagesDialog.getPages().toArray(new OperatePage[0]));
+                sortPagesDialog.setOnDismissListener(dialog -> {
+                    // TODO: 2023/12/7 页面位置更新
+                    if (sortPagesDialog.getPages() != null){
+                        List<OperatePageDebugFragment> fragments = new ArrayList<>();
+                        for (OperatePage page : sortPagesDialog.getPages()){
+                            int index = 0;
+                            for (OperatePageDebugFragment fragment : viewModel.getOperatePageAdapter().getFragments()){
+                                if (fragment.getOperatePage().getPageId() == page.getPageId()){
+                                    fragments.add(fragment);
+                                    page.setPosition(index);
+                                    break;
+                                }
+                                index++;
+                            }
                         }
+                        viewModel.getOperatePageAdapter().setFragments(fragments);
+                        Objects.requireNonNull(binding.vpTac.getAdapter()).notifyDataSetChanged();
+                        onPageUpdate(sortPagesDialog.getPages().toArray(new OperatePage[0]));
                     }
                 });
                 sortPagesDialog.show();
@@ -222,6 +199,7 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -253,5 +231,53 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                 viewModel.updateModule(adapter.getModules().toArray(new ActionModule[0]));
             }
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @Override
+    public void onPageInit() {
+        List<OperatePageDebugFragment> fragments = new ArrayList<>();
+        int index = 0;
+        for (OperatePage page : viewModel.getPages()){
+            page.setPosition(index);
+            fragments.add(new OperatePageDebugFragment(viewModel, page));
+            index++;
+        }
+        viewModel.getOperatePageAdapter().setFragments(fragments);
+        binding.vpTac.setAdapter(viewModel.getOperatePageAdapter());
+        Objects.requireNonNull(binding.vpTac.getAdapter()).notifyDataSetChanged();
+    }
+
+    @Override
+    public void onPageInsert(OperatePage operatePage) {
+        viewModel.getPages().add(operatePage);
+        viewModel.getOperatePageAdapter().getFragments().add(new OperatePageDebugFragment(viewModel, operatePage));
+        Objects.requireNonNull(binding.vpTac.getAdapter()).notifyItemInserted(viewModel.getOperatePageAdapter()
+                .getFragments().size());
+    }
+
+    @Override
+    public void onPageRemove(int position) {
+        if (Constant.CURRENT_PAGE_ID == -1){//检查一下页面指针出错没有
+            Toast.makeText(ModuleDebugActivity.this,
+                    getString(R.string.page_index_error), Toast.LENGTH_SHORT).show();
+        }
+        viewModel.deletePage(Constant.CURRENT_PAGE_ID);
+        int index = 0;
+        for (OperatePageDebugFragment fragment : viewModel.getOperatePageAdapter().getFragments()){
+            OperatePage page = fragment.getOperatePage();
+            if (page.getPageId() == Constant.CURRENT_PAGE_ID){
+                viewModel.getPages().remove(page);
+                viewModel.getOperatePageAdapter().getFragments().remove(fragment);
+                break;
+            }
+            index++;
+        }
+        Objects.requireNonNull(binding.vpTac.getAdapter()).notifyItemRemoved(index);
+    }
+
+    @Override
+    public void onPageUpdate(OperatePage...operatePages) {
+        viewModel.updatePage(operatePages);
     }
 }

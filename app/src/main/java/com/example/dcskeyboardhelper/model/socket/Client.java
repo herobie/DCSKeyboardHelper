@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
-// TODO: 2023/11/21 切换连接 
 public class Client {
     private String serverIp;
     private int port;

@@ -41,7 +41,6 @@ public class ProfileDialog extends BaseDialog<DialogInsertProfileBinding> {
                 String desc = Objects.requireNonNull(binding.edProfileDesc.getEditText()).getText().toString();
                 long createdDate = System.currentTimeMillis();
                 newProfileId = viewModel.insert(new Profile(title, desc, createdDate));
-                // TODO: 2023/11/21 操作失败 
                 Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
                 dismiss();
             }

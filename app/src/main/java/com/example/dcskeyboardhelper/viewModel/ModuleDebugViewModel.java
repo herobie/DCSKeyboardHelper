@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.dcskeyboardhelper.model.ActionModuleModel;
+import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.OperatePageModel;
 import com.example.dcskeyboardhelper.model.adapter.FragmentsAdapter;
 import com.example.dcskeyboardhelper.model.adapter.SupportDebugAdapter;
@@ -107,10 +108,9 @@ public class ModuleDebugViewModel extends AndroidViewModel {
     }
 
     public List<OperatePage> getPages() {
+        if(pages == null){
+            pages = pageModel.getOperatePage(Constant.CURRENT_PROFILE_ID);
+        }
         return pages;
-    }
-
-    public void setPages(List<OperatePage> pages) {
-        this.pages = pages;
     }
 }

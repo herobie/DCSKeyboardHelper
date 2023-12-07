@@ -58,7 +58,6 @@ public abstract class SuperBaseDialogFragment<T extends ViewDataBinding> extends
     public void onResume() {
         super.onResume();
         //必须onResume的时候设置dialogFragment的宽高
-        // TODO: 2023/11/21 dialog宽高
         Objects.requireNonNull(getDialog())
                 .getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
     }

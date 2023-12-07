@@ -2,7 +2,6 @@ package com.example.dcskeyboardhelper.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,7 +16,9 @@ import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 import java.util.Objects;
 
 public class PageDialog extends BaseDialog<DialogInsertPageBinding> {
-    private ModuleDebugViewModel viewModel;
+    private final ModuleDebugViewModel viewModel;
+    private OperatePage operatePage;
+    private boolean isConfirm = false;
     public PageDialog(@NonNull Context context, ModuleDebugViewModel viewModel) {
         super(context);
         this.viewModel = viewModel;
@@ -26,26 +27,25 @@ public class PageDialog extends BaseDialog<DialogInsertPageBinding> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding.btnPageConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String pageName = Objects.requireNonNull(binding.edPageTitle.getEditText()).getText().toString();
-                viewModel.insertPage(new OperatePage(Constant.CURRENT_PROFILE_ID, pageName));
-                Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
-                dismiss();
-            }
+        binding.btnPageConfirm.setOnClickListener(v -> {
+            String pageName = Objects.requireNonNull(binding.edPageTitle.getEditText()).getText().toString();
+            operatePage = new OperatePage(Constant.CURRENT_PROFILE_ID, pageName);
+            long pageId = viewModel.insertPage(operatePage);
+            operatePage.setPageId(pageId);
+            isConfirm = true;
+            Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
+            dismiss();
         });
 
-        binding.btnPageCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        binding.btnPageCancel.setOnClickListener(v -> dismiss());
     }
 
     @Override
     protected int getLayoutRes() {
         return R.layout.dialog_insert_page;
+    }
+
+    public OperatePage getOperatePage() {
+        return isConfirm? operatePage : null;
     }
 }

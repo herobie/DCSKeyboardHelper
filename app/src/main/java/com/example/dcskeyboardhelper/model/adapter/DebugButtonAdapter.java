@@ -164,7 +164,12 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
     }
 
     private int measureIndicatorWeight(LinearLayout container, int stepSum){
-        return container.getMeasuredHeight() / ( stepSum - 1 );
+        try {
+            return container.getMeasuredHeight() / ( stepSum - 1 );
+        }catch (ArithmeticException e){
+            return container.getMeasuredHeight() / stepSum;//步进或循环模式下只设置一个会出现除以0的情况
+        }
+
     }
 
     public List<ActionModule> getModules() {
