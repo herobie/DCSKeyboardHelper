@@ -9,7 +9,6 @@ import com.example.dcskeyboardhelper.database.UserDatabase;
 import com.example.dcskeyboardhelper.model.bean.ActionModule;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -22,12 +21,7 @@ public class ActionModuleModel extends BaseModel {
     }
 
     public List<ActionModule> queryAllModules(long pageId){
-        Future<List<ActionModule>> future = executorService.submit(new Callable<List<ActionModule>>() {
-            @Override
-            public List<ActionModule> call() throws Exception {
-                return actionModuleDao.queryAll(pageId);
-            }
-        });
+        Future<List<ActionModule>> future = executorService.submit(() -> actionModuleDao.queryAll(pageId));
 
         try {
             return future.get();
@@ -38,12 +32,7 @@ public class ActionModuleModel extends BaseModel {
     }
 
     public long insertModule(ActionModule module){
-        Future<Long> future = executorService.submit(new Callable<Long>() {
-            @Override
-            public Long call() throws Exception {
-                return actionModuleDao.insertModule(module);
-            }
-        });
+        Future<Long> future = executorService.submit(() -> actionModuleDao.insertModule(module));
 
         try {
             return future.get();
@@ -54,39 +43,19 @@ public class ActionModuleModel extends BaseModel {
     }
 
     public void deleteModule(long id){
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                actionModuleDao.deleteModule(id);
-            }
-        });
+        executorService.submit(() -> actionModuleDao.deleteModule(id));
     }
 
     public void deleteModuleInPage(long pageId){
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                actionModuleDao.deleteModuleInPage(pageId);
-            }
-        });
+        executorService.submit(() -> actionModuleDao.deleteModuleInPage(pageId));
     }
 
     public void updateModule(ActionModule...module){
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                actionModuleDao.updateModule(module);
-            }
-        });
+        executorService.submit(() -> actionModuleDao.updateModule(module));
     }
 
     public List<ActionModule> getStarredModule(){
-        Future<List<ActionModule>> future = executorService.submit(new Callable<List<ActionModule>>() {
-            @Override
-            public List<ActionModule> call() throws Exception {
-                return actionModuleDao.getStarredModule();
-            }
-        });
+        Future<List<ActionModule>> future = executorService.submit(actionModuleDao::getStarredModule);
 
         try {
             return future.get();
@@ -99,10 +68,9 @@ public class ActionModuleModel extends BaseModel {
     //当发生模块交换位置时调用，用于更新模块位置数据
     public void swapModule(List<ActionModule> modules){
         Log.d("MainActivity", "swapModule: ");
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-
+        executorService.submit(() -> {
+            for (ActionModule module : modules){
+                actionModuleDao.updateModule(module);
             }
         });
     }

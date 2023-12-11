@@ -3,7 +3,6 @@ package com.example.dcskeyboardhelper.ui.simulate;
 import android.annotation.SuppressLint;
 
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.dcskeyboardhelper.R;
@@ -31,13 +30,10 @@ public class SupportFragment extends BaseFragment<FragmentSupportBinding, Simula
         viewModel.setSupportAdapter(adapter);
 
         List<ActionModule> starredModules = viewModel.getStarredModules();//获取星标item
-        viewModel.getIsStarredModulesReady().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean){
-                    adapter.setModules(starredModules);
-                    adapter.notifyDataSetChanged();
-                }
+        viewModel.getIsStarredModulesReady().observe(this, aBoolean -> {
+            if (aBoolean){
+                adapter.setModules(starredModules);
+                adapter.notifyDataSetChanged();
             }
         });
     }

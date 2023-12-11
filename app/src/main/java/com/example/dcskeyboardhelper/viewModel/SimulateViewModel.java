@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.dcskeyboardhelper.model.ActionModuleModel;
 import com.example.dcskeyboardhelper.model.OperatePageModel;
 import com.example.dcskeyboardhelper.model.adapter.FragmentsAdapter;
 import com.example.dcskeyboardhelper.model.adapter.SupportAdapter;

@@ -3,7 +3,6 @@ package com.example.dcskeyboardhelper.ui.dialog;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -67,12 +66,9 @@ public class SortPagesDialog extends BaseDialog<DialogSortPageBinding> {
         });
         itemTouchHelper.attachToRecyclerView(binding.rvSortPages);
 
-        binding.btnSortPagesConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isConfirm = true;
-                dismiss();
-            }
+        binding.btnSortPagesConfirm.setOnClickListener(v -> {
+            isConfirm = true;
+            dismiss();
         });
     }
 

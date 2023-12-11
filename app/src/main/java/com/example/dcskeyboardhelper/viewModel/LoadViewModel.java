@@ -12,7 +12,7 @@ import com.example.dcskeyboardhelper.model.bean.Profile;
 import java.util.List;
 
 public class LoadViewModel extends BaseViewModel<ProfileModel> {
-    private ProfileModel model;
+    private final ProfileModel model;
     public LoadViewModel(@NonNull Application application) {
         super(application);
         model = new ProfileModel(application);

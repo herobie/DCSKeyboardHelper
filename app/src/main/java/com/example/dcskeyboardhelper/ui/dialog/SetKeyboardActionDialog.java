@@ -4,11 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,7 +32,7 @@ public class SetKeyboardActionDialog extends Dialog implements KeysAdapter.KeySe
     private Action action;
     private boolean isConfirm = false;//用于标记是否是按确认键退出Dialog的
     private final String dialog_status;
-    private List<Integer> codes;
+    private final List<Integer> codes;
     public SetKeyboardActionDialog(@NonNull Context context) {
         super(context, R.style.DialogBaseStyle);
         dialog_status = Constant.CREATE;
@@ -75,27 +72,21 @@ public class SetKeyboardActionDialog extends Dialog implements KeysAdapter.KeySe
         KeysAdapter adapter = new KeysAdapter(this);
         rv_keyboard.setAdapter(adapter);
 
-        btn_set_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //每个步骤至少选择一个模拟按键
-                if (grid_actions_container.getChildCount() == 0){
-                    Toast.makeText(getContext(), getContext().getString(R.string.actions_non_null), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                isConfirm = true;
-                dismiss();
+        btn_set_confirm.setOnClickListener(v -> {
+            //每个步骤至少选择一个模拟按键
+            if (grid_actions_container.getChildCount() == 0){
+                Toast.makeText(getContext(), getContext().getString(R.string.actions_non_null), Toast.LENGTH_SHORT).show();
+                return;
             }
+            isConfirm = true;
+            dismiss();
         });
 
-        btn_step_backspace.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    //退格，移除队列最后一个模拟按键，没有按键时会抛出异常，这里try-catch直接捕捉处理
-                    grid_actions_container.removeViewAt(grid_actions_container.getChildCount() - 1);
-                }catch (NullPointerException ignored){
-                }
+        btn_step_backspace.setOnClickListener(v -> {
+            try {
+                //退格，移除队列最后一个模拟按键，没有按键时会抛出异常，这里try-catch直接捕捉处理
+                grid_actions_container.removeViewAt(grid_actions_container.getChildCount() - 1);
+            }catch (NullPointerException ignored){
             }
         });
     }

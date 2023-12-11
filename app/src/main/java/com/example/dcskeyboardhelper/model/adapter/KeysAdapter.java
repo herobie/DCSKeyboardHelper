@@ -1,14 +1,11 @@
 package com.example.dcskeyboardhelper.model.adapter;
 
-import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.SuperBaseAdapter;
 import com.example.dcskeyboardhelper.databinding.ItemKeyBinding;
-import com.example.dcskeyboardhelper.model.bean.Action;
 import com.example.dcskeyboardhelper.model.bean.Key;
 import com.example.dcskeyboardhelper.model.socket.KeyCodes;
 
@@ -27,12 +24,8 @@ public class KeysAdapter extends SuperBaseAdapter<ItemKeyBinding> {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         binding.tvKeyName.setText(keys.get(position).getName());
-        binding.cvKeyBackground.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                keySelectedListener.onKeySelected(keys.get(holder.getAdapterPosition()));
-            }
-        });
+        binding.cvKeyBackground.setOnClickListener(v ->
+                keySelectedListener.onKeySelected(keys.get(holder.getAdapterPosition())));
     }
 
     @Override
@@ -45,13 +38,9 @@ public class KeysAdapter extends SuperBaseAdapter<ItemKeyBinding> {
         return keys == null? 0 : keys.size();
     }
 
-    private KeySelectedListener keySelectedListener;
+    private final KeySelectedListener keySelectedListener;
 
     public interface KeySelectedListener{
         void onKeySelected(Key key);
-    }
-
-    public void setKeySelectedListener(KeySelectedListener keySelectedListener) {
-        this.keySelectedListener = keySelectedListener;
     }
 }

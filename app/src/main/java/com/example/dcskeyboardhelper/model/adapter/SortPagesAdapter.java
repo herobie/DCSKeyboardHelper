@@ -12,7 +12,7 @@ import java.util.List;
 
 //页面排序及更新adapter
 public class SortPagesAdapter extends SuperBaseAdapter<ItemPageBinding> {
-    private List<OperatePage> pages;
+    private final List<OperatePage> pages;
 
     public SortPagesAdapter(List<OperatePage> pages) {
         this.pages = pages;

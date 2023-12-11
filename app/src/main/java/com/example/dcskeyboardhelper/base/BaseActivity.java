@@ -1,7 +1,6 @@
 package com.example.dcskeyboardhelper.base;
 
 import android.os.Bundle;
-import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;

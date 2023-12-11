@@ -3,7 +3,6 @@ package com.example.dcskeyboardhelper.model.adapter;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,8 +27,8 @@ import java.util.List;
 
 public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Profile> profiles;
-    private Context context;
-    private LoadViewModel viewModel;
+    private final Context context;
+    private final LoadViewModel viewModel;
     private final String parentPage;//通过这个变量来获取是这是在调试模式还是开始模拟按钮中打开的
 
     public SaveAdapter(Context context, LoadViewModel loadViewModel, String parentPage) {
@@ -62,59 +61,45 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         if (holder.getItemViewType() == 0){
-            ((InsertVH) holder).ib_new_profile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ProfileDialog profileDialog = new ProfileDialog(context, viewModel);
-                    profileDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            //如果添加成功，那么则自动跳转至新添加的配置的操作页面
-                            if (profileDialog.getNewProfileId() != -1){//返回-1代表添加失败或点击了取消添加按钮
-                                long profileId = profileDialog.getNewProfileId();//获取配置id并传给下一个页面
-                                if (Constant.SIMULATION_MODE.equals(parentPage)){
-                                    Intent intent = new Intent(context, SimulateActivity.class);
-                                    intent.putExtra("profiledId", profileId);
-                                    context.startActivity(intent);
-                                    Constant.CURRENT_PROFILE_ID = profileId;
-                                }else if (Constant.DEBUG_MODE.equals(parentPage)){
-                                    Intent intent = new Intent(context, ModuleDebugActivity.class);
-                                    intent.putExtra("profileId", profileId);
-                                    context.startActivity(intent);
-                                    Constant.CURRENT_PROFILE_ID = profileId;
-                                }
-                            }
+            ((InsertVH) holder).ib_new_profile.setOnClickListener(v -> {
+                ProfileDialog profileDialog = new ProfileDialog(context, viewModel);
+                profileDialog.setOnDismissListener(dialog -> {
+                    //如果添加成功，那么则自动跳转至新添加的配置的操作页面
+                    if (profileDialog.getNewProfileId() != -1){//返回-1代表添加失败或点击了取消添加按钮
+                        long profileId = profileDialog.getNewProfileId();//获取配置id并传给下一个页面
+                        if (Constant.SIMULATION_MODE.equals(parentPage)){
+                            Intent intent = new Intent(context, SimulateActivity.class);
+                            intent.putExtra("profiledId", profileId);
+                            context.startActivity(intent);
+                            Constant.CURRENT_PROFILE_ID = profileId;
+                        }else if (Constant.DEBUG_MODE.equals(parentPage)){
+                            Intent intent = new Intent(context, ModuleDebugActivity.class);
+                            intent.putExtra("profileId", profileId);
+                            context.startActivity(intent);
+                            Constant.CURRENT_PROFILE_ID = profileId;
                         }
-                    });
-                    profileDialog.show();
-                }
+                    }
+                });
+                profileDialog.show();
             });
         }else {
             ((ProfileVH) holder).tv_profile_title.setText(profiles.get(position).getTitle());
             ((ProfileVH) holder).tv_profile_desc.setText(profiles.get(position).getDesc());
             ((ProfileVH) holder).tv_profile_date.setText(DateUtil.longToDate(profiles.get(position).getCreatedDate()));
-            ((ProfileVH) holder).tv_profile_delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    deleteItem(position);
-                }
-            });
-            ((ProfileVH) holder).cv_profile_background.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (Constant.SIMULATION_MODE.equals(parentPage)){
-                        long profileId = viewModel.getProfileById(profiles.get(position).getId());
-                        Intent intent = new Intent(context, SimulateActivity.class);
-                        intent.putExtra("profileId", profileId);
-                        context.startActivity(intent);
-                        Constant.CURRENT_PROFILE_ID = profileId;
-                    }else if (Constant.DEBUG_MODE.equals(parentPage)){
-                        long profileId = viewModel.getProfileById(profiles.get(position).getId());
-                        Intent intent = new Intent(context, ModuleDebugActivity.class);
-                        intent.putExtra("profileId", profileId);
-                        context.startActivity(intent);
-                        Constant.CURRENT_PROFILE_ID = profileId;
-                    }
+            ((ProfileVH) holder).tv_profile_delete.setOnClickListener(v -> deleteItem(position));
+            ((ProfileVH) holder).cv_profile_background.setOnClickListener(v -> {
+                if (Constant.SIMULATION_MODE.equals(parentPage)){
+                    long profileId = viewModel.getProfileById(profiles.get(position).getId());
+                    Intent intent = new Intent(context, SimulateActivity.class);
+                    intent.putExtra("profileId", profileId);
+                    context.startActivity(intent);
+                    Constant.CURRENT_PROFILE_ID = profileId;
+                }else if (Constant.DEBUG_MODE.equals(parentPage)){
+                    long profileId = viewModel.getProfileById(profiles.get(position).getId());
+                    Intent intent = new Intent(context, ModuleDebugActivity.class);
+                    intent.putExtra("profileId", profileId);
+                    context.startActivity(intent);
+                    Constant.CURRENT_PROFILE_ID = profileId;
                 }
             });
         }
@@ -125,18 +110,9 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.warning))
                 .setMessage(context.getString(R.string.confirm_operate));
-        alertBuilder.setPositiveButton(context.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                viewModel.delete(profiles.get(position).getId());
-            }
-        });
-        alertBuilder.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        alertBuilder.setPositiveButton(context.getString(R.string.confirm), (dialog, which) ->
+                viewModel.delete(profiles.get(position).getId()));
+        alertBuilder.setNegativeButton(context.getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
         alertBuilder.show();
     }
 

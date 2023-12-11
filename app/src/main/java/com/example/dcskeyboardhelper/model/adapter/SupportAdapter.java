@@ -1,7 +1,5 @@
 package com.example.dcskeyboardhelper.model.adapter;
 
-import android.annotation.SuppressLint;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 

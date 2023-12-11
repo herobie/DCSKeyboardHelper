@@ -10,7 +10,6 @@ import com.example.dcskeyboardhelper.database.UserDatabase;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -23,12 +22,8 @@ public class OperatePageModel extends BaseModel {
     }
 
     public LiveData<List<OperatePage>> getOperatePageLiveData(long profileId){
-        Future<LiveData<List<OperatePage>>> future = executorService.submit(new Callable<LiveData<List<OperatePage>>>() {
-            @Override
-            public LiveData<List<OperatePage>> call() throws Exception {
-                return operatePageDao.getOperatePageLiveData(profileId);
-            }
-        });
+        Future<LiveData<List<OperatePage>>> future = executorService.submit(() ->
+                operatePageDao.getOperatePageLiveData(profileId));
 
         try {
             return future.get();
@@ -39,12 +34,7 @@ public class OperatePageModel extends BaseModel {
     }
 
     public List<OperatePage> getOperatePage(long profileId){
-        Future<List<OperatePage>> future = executorService.submit(new Callable<List<OperatePage>>() {
-            @Override
-            public List<OperatePage> call() throws Exception {
-                return operatePageDao.getOperatePage(profileId);
-            }
-        });
+        Future<List<OperatePage>> future = executorService.submit(() -> operatePageDao.getOperatePage(profileId));
 
         try {
             return future.get();
@@ -55,12 +45,7 @@ public class OperatePageModel extends BaseModel {
     }
 
     public long insertPage(OperatePage page){
-        Future<Long> future = executorService.submit(new Callable<Long>() {
-            @Override
-            public Long call() throws Exception {
-                return operatePageDao.insertPage(page);
-            }
-        });
+        Future<Long> future = executorService.submit(() -> operatePageDao.insertPage(page));
 
         try {
             return future.get();

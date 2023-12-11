@@ -1,17 +1,13 @@
 package com.example.dcskeyboardhelper.ui.dialog;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dcskeyboardhelper.R;
-import com.example.dcskeyboardhelper.base.BaseDialog;
 import com.example.dcskeyboardhelper.base.BaseDialogFragment;
 import com.example.dcskeyboardhelper.databinding.DialogInsertActionModuleBinding;
 import com.example.dcskeyboardhelper.model.Constant;

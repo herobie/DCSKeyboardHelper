@@ -47,20 +47,17 @@ public class SimulateButtonAdapter extends BaseAdapter<ItemActionButtonBinding, 
             }
         });
 
-        binding.clActionBackground.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActionModule module = modules.get(holder.getAdapterPosition());
-                int switchMode = module.getSwitchMode();
-                //step和loop的container参数不能直接传一个binding.stepIndicatorContainer，怀疑是和dataBinding绑定的viewHolder错乱有关
-                LinearLayout container = holder.itemView.findViewById(R.id.step_indicator_container);
-                if (switchMode == Constant.STEP){
-                    step(module, container);
-                }else if (switchMode == Constant.LOOP){
-                    loop(module, container);
-                }
-                onModuleChangeBasicListener.onStepChange(module, module.getCurrentStep());
+        binding.clActionBackground.setOnClickListener(v -> {
+            ActionModule module = modules.get(holder.getAdapterPosition());
+            int switchMode = module.getSwitchMode();
+            //step和loop的container参数不能直接传一个binding.stepIndicatorContainer，怀疑是和dataBinding绑定的viewHolder错乱有关
+            LinearLayout container = holder.itemView.findViewById(R.id.step_indicator_container);
+            if (switchMode == Constant.STEP){
+                step(module, container);
+            }else if (switchMode == Constant.LOOP){
+                loop(module, container);
             }
+            onModuleChangeBasicListener.onStepChange(module, module.getCurrentStep());
         });
     }
 

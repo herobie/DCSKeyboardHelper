@@ -1,7 +1,6 @@
 package com.example.dcskeyboardhelper.ui.debug;
 
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.dcskeyboardhelper.R;
@@ -23,11 +22,8 @@ public class SupportDebugFragment extends BaseFragment<FragmentSupportBinding, M
         binding.rvSupport.setAdapter(adapter);
         viewModel.setSupportDebugAdapter(adapter);
 
-        viewModel.getIsStarredModulesReady().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) adapter.setModules(viewModel.getStarredModules());
-            }
+        viewModel.getIsStarredModulesReady().observe(this, aBoolean -> {
+            if (aBoolean) adapter.setModules(viewModel.getStarredModules());
         });
 
     }

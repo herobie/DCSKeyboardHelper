@@ -1,17 +1,16 @@
 package com.example.dcskeyboardhelper.ui;
 
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.view.View;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.BaseActivity;
@@ -61,6 +60,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         bindService(intent, conn, Service.BIND_AUTO_CREATE);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -89,28 +89,25 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
 
     private void observeConnectStatus(){
         //观察服务端连接情况
-        viewModel.getConnectionStatus().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                //连接情况发生改变时，会发送广播告知相应的接收者当前连接情况
-                switch (integer){
-                    case Client.NO_CONNECTED:
-                        binding.tvConnectionStatus.setText(R.string.device_no_connect);
-                        binding.btnDisconnect.setVisibility(View.INVISIBLE);
-                        break;
-                    case Client.SERVER_CONNECTED:
-                        binding.tvConnectionStatus.setText(R.string.device_connected);
-                        binding.btnDisconnect.setVisibility(View.VISIBLE);
-                        break;
-                    case Client.SERVER_CONNECT_FAILED:
-                        binding.tvConnectionStatus.setText(R.string.connect_failed);
-                        binding.btnDisconnect.setVisibility(View.INVISIBLE);
-                        break;
-                    case Client.SERVER_CONNECTING:
-                        binding.tvConnectionStatus.setText(R.string.device_connecting);
-                        binding.btnDisconnect.setVisibility(View.INVISIBLE);
-                        break;
-                }
+        viewModel.getConnectionStatus().observe(this, integer -> {
+            //连接情况发生改变时，会发送广播告知相应的接收者当前连接情况
+            switch (integer){
+                case Client.NO_CONNECTED:
+                    binding.tvConnectionStatus.setText(R.string.device_no_connect);
+                    binding.btnDisconnect.setVisibility(View.INVISIBLE);
+                    break;
+                case Client.SERVER_CONNECTED:
+                    binding.tvConnectionStatus.setText(R.string.device_connected);
+                    binding.btnDisconnect.setVisibility(View.VISIBLE);
+                    break;
+                case Client.SERVER_CONNECT_FAILED:
+                    binding.tvConnectionStatus.setText(R.string.connect_failed);
+                    binding.btnDisconnect.setVisibility(View.INVISIBLE);
+                    break;
+                case Client.SERVER_CONNECTING:
+                    binding.tvConnectionStatus.setText(R.string.device_connecting);
+                    binding.btnDisconnect.setVisibility(View.INVISIBLE);
+                    break;
             }
         });
     }

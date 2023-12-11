@@ -1,23 +1,20 @@
 package com.example.dcskeyboardhelper.ui.simulate;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListPopupWindow;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -29,8 +26,6 @@ import com.example.dcskeyboardhelper.model.adapter.FragmentsAdapter;
 import com.example.dcskeyboardhelper.model.bean.OperatePage;
 import com.example.dcskeyboardhelper.model.socket.Client;
 import com.example.dcskeyboardhelper.model.socket.ConnectService;
-import com.example.dcskeyboardhelper.ui.debug.OperatePageDebugFragment;
-import com.example.dcskeyboardhelper.ui.debug.SupportDebugFragment;
 import com.example.dcskeyboardhelper.util.PopupWindowUtil;
 import com.example.dcskeyboardhelper.viewModel.SimulateViewModel;
 
@@ -113,6 +108,7 @@ public class SimulateActivity extends BaseActivity<ActivitySimulateBinding, Simu
         binding.vpSupport.setAdapter(new FragmentsAdapter<>(viewModel.getFragmentManager(), getLifecycle(), supportFragments));
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
@@ -141,12 +137,8 @@ public class SimulateActivity extends BaseActivity<ActivitySimulateBinding, Simu
                 ListPopupWindow pageWindow = PopupWindowUtil.initPopupWindow(view , this, pageNames, 250,
                         ListPopupWindow.WRAP_CONTENT, null);
                 pageWindow.setHorizontalOffset(-75);
-                pageWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        binding.vpTac.setCurrentItem(position);
-                    }
-                });
+                pageWindow.setOnItemClickListener((parent, view1, position, id) ->
+                        binding.vpTac.setCurrentItem(position));
                 pageWindow.show();
         }
         return true;
@@ -166,28 +158,25 @@ public class SimulateActivity extends BaseActivity<ActivitySimulateBinding, Simu
             binding.tvBlurWarning.setText(R.string.connect_notice_retry);
         }
 
-        connectService.getClient().getConnectionStatus().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                switch (integer){
-                    case Client.NO_CONNECTED:
-                        binding.tvBlurTitle.setText(R.string.device_no_connect);
-                        binding.tvBlurWarning.setText(R.string.reconnecting);
-                        break;
-                    case Client.SERVER_CONNECT_FAILED:
-                        binding.tvBlurTitle.setText(R.string.device_no_connect);
-                        binding.tvBlurWarning.setText(R.string.connect_notice_retry);
-                        binding.clBlur.setVisibility(View.VISIBLE);
-                        break;
-                    case Client.SERVER_CONNECTED:
-                        binding.clBlur.setVisibility(View.GONE);
-                        break;
-                    case Client.SERVER_CONNECTING:
-                        binding.clBlur.setVisibility(View.VISIBLE);
-                        binding.tvBlurTitle.setText(R.string.device_connecting);
-                        binding.tvBlurWarning.setText(R.string.connect_notice_wait);
-                        break;
-                }
+        connectService.getClient().getConnectionStatus().observe(this, integer -> {
+            switch (integer){
+                case Client.NO_CONNECTED:
+                    binding.tvBlurTitle.setText(R.string.device_no_connect);
+                    binding.tvBlurWarning.setText(R.string.reconnecting);
+                    break;
+                case Client.SERVER_CONNECT_FAILED:
+                    binding.tvBlurTitle.setText(R.string.device_no_connect);
+                    binding.tvBlurWarning.setText(R.string.connect_notice_retry);
+                    binding.clBlur.setVisibility(View.VISIBLE);
+                    break;
+                case Client.SERVER_CONNECTED:
+                    binding.clBlur.setVisibility(View.GONE);
+                    break;
+                case Client.SERVER_CONNECTING:
+                    binding.clBlur.setVisibility(View.VISIBLE);
+                    binding.tvBlurTitle.setText(R.string.device_connecting);
+                    binding.tvBlurWarning.setText(R.string.connect_notice_wait);
+                    break;
             }
         });
     }
@@ -224,6 +213,7 @@ public class SimulateActivity extends BaseActivity<ActivitySimulateBinding, Simu
         return 0;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()){

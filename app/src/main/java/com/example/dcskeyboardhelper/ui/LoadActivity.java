@@ -1,27 +1,19 @@
 package com.example.dcskeyboardhelper.ui;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.BaseActivity;
 import com.example.dcskeyboardhelper.databinding.ActivityLoadBinding;
 import com.example.dcskeyboardhelper.model.adapter.SaveAdapter;
-import com.example.dcskeyboardhelper.model.bean.Profile;
 import com.example.dcskeyboardhelper.viewModel.LoadViewModel;
 
-import java.util.List;
 import java.util.Objects;
 
 public class LoadActivity extends BaseActivity<ActivityLoadBinding, LoadViewModel> {
@@ -44,12 +36,7 @@ public class LoadActivity extends BaseActivity<ActivityLoadBinding, LoadViewMode
         SaveAdapter saveAdapter = new SaveAdapter(this, viewModel, launchMode);
         binding.rvSave.setAdapter(saveAdapter);
 
-        viewModel.queryAll().observe(this, new Observer<List<Profile>>() {
-            @Override
-            public void onChanged(List<Profile> profiles) {
-                saveAdapter.setProfiles(profiles);
-            }
-        });
+        viewModel.queryAll().observe(this, saveAdapter::setProfiles);
     }
 
     @Override

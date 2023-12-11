@@ -10,13 +10,11 @@ import com.example.dcskeyboardhelper.database.UserDatabase;
 import com.example.dcskeyboardhelper.model.bean.Profile;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class ProfileModel extends BaseModel {
-    private ProfileDao profileDao;
-    private Context context;
+    private final ProfileDao profileDao;
 
     public ProfileModel(Context context) {
         UserDatabase userDataBase = UserDatabase.getInstance(context.getApplicationContext());
@@ -24,12 +22,7 @@ public class ProfileModel extends BaseModel {
     }
 
     public LiveData<List<Profile>> queryAll(){
-        Future<LiveData<List<Profile>>> future = executorService.submit(new Callable<LiveData<List<Profile>>>() {
-            @Override
-            public LiveData<List<Profile>> call() throws Exception {
-                return profileDao.queryAll();
-            }
-        });
+        Future<LiveData<List<Profile>>> future = executorService.submit(profileDao::queryAll);
 
         try {
             return future.get();
@@ -40,12 +33,7 @@ public class ProfileModel extends BaseModel {
     }
 
     public long insert(Profile profile){
-        Future<Long> future = executorService.submit(new Callable<Long>() {
-            @Override
-            public Long call() throws Exception {
-                return profileDao.insertProfile(profile);
-            }
-        });
+        Future<Long> future = executorService.submit(() -> profileDao.insertProfile(profile));
 
         try {
             return future.get();
@@ -56,21 +44,11 @@ public class ProfileModel extends BaseModel {
     }
 
     public void delete(long id){
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                profileDao.deleteProfile(id);
-            }
-        });
+        executorService.submit(() -> profileDao.deleteProfile(id));
     }
 
     public long getProfileById(long id){
-        Future<Long> future = executorService.submit(new Callable<Long>() {
-            @Override
-            public Long call() throws Exception {
-                return profileDao.getProfileById(id);
-            }
-        });
+        Future<Long> future = executorService.submit(() -> profileDao.getProfileById(id));
 
         try {
             return future.get();
