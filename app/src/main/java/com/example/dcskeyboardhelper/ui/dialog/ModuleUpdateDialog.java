@@ -1,16 +1,15 @@
 package com.example.dcskeyboardhelper.ui.dialog;
 
-import android.content.Context;
-import android.os.Bundle;
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dcskeyboardhelper.R;
-import com.example.dcskeyboardhelper.base.BaseDialog;
+import com.example.dcskeyboardhelper.base.BaseDialogFragment;
 import com.example.dcskeyboardhelper.databinding.DialogInsertActionModuleBinding;
 import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.adapter.KeyboardActionsAdapter;
@@ -19,20 +18,19 @@ import com.example.dcskeyboardhelper.viewModel.OperatePageViewModel;
 
 import java.util.Objects;
 
-public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBinding> implements View.OnClickListener {
-    private final OperatePageViewModel viewModel;
+public class ModuleUpdateDialog extends BaseDialogFragment<DialogInsertActionModuleBinding, OperatePageViewModel>
+        implements View.OnClickListener {
     private final ActionModule module;
     private KeyboardActionsAdapter adapter;
     private boolean isUpdate = false;
-    public ModuleUpdateDialog(@NonNull Context context, OperatePageViewModel viewModel, ActionModule module) {
-        super(context);
-        this.viewModel = viewModel;
+
+    public ModuleUpdateDialog(OperatePageViewModel viewModel, ActionModule module) {
+        super(viewModel);
         this.module = module;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initParams() {
         //初始化rv
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -57,6 +55,7 @@ public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBindi
         binding.btnInsertConfirm.setOnClickListener(this);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -88,20 +87,20 @@ public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBindi
                 //检查pageId和profileId有无错误
                 long pageId = Constant.CURRENT_PAGE_ID;
                 if (pageId == -1){
-                    Toast.makeText(getContext(), getContext().getString(R.string.page_index_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.page_index_error, Toast.LENGTH_SHORT).show();
                     dismiss();
                     return;
                 }
                 long profileId = Constant.CURRENT_PROFILE_ID;
                 if (profileId == -1){
-                    Toast.makeText(getContext(), getContext().getString(R.string.profile_index_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.profile_index_error, Toast.LENGTH_SHORT).show();
                     dismiss();
                     return;
                 }
                  module.updateModule(title, desc, stepSum, defaultStep, switchMode, adapter.getActions(),
                          isStarred, pageId, profileId, 0);
                 viewModel.updateModule(module);
-                Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.operate_success, Toast.LENGTH_SHORT).show();
                 isUpdate = true;
                 dismiss();
         }
@@ -116,7 +115,17 @@ public class ModuleUpdateDialog extends BaseDialog<DialogInsertActionModuleBindi
     }
 
     @Override
+    protected void setDismissCountdown() {
+
+    }
+
+    @Override
     protected int getLayoutRes() {
         return R.layout.dialog_insert_action_module;
+    }
+
+    @Override
+    protected Dialog setCustomDialogStyle() {
+        return null;
     }
 }

@@ -61,10 +61,6 @@ public class Client {
         this.connectionStatus = connectionStatus;
     }
 
-    public void useDefaultConfig(){
-        setNetworkAttr("10.158.205.24", 1688);
-    }
-
     public void setNetworkAttr(String serverIp, int port){
         this.serverIp = serverIp;
         this.port = port;
@@ -157,7 +153,7 @@ public class Client {
     }
 
     //向服务端发送消息
-    public void sendMessage(String message) throws IOException {
+    public void sendMessage(String message) {
         message += endIcon;//补充一个数据传输终止符
         new Thread(new MessageSender(message.getBytes())).start();
         Log.d("MainActivity","Submit Message: " + message);
@@ -171,7 +167,7 @@ public class Client {
     }
 
     private class MessageSender implements Runnable{
-        private byte[] bytes;
+        private final byte[] bytes;
 
         public MessageSender(byte[] bytes) {
             this.bytes = bytes;
@@ -197,8 +193,8 @@ public class Client {
     }
 
     private class KeepAliveWatchDog implements Runnable{
-        private final long checkDelay = 2048;//进行检查的间隔
-        private final long keepAliveDelay = 4096;//两次向服务端发送消息的间隔，如果超过这个间隔没有发送消息，则会强制发送一条检查消息
+        private final long checkDelay = 1024;//进行检查的间隔
+        private final long keepAliveDelay = 2048;//两次向服务端发送消息的间隔，如果超过这个间隔没有发送消息，则会强制发送一条检查消息
         @Override
         public void run() {
             while (connected){

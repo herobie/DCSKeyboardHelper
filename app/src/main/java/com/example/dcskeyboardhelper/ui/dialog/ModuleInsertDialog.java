@@ -1,5 +1,6 @@
 package com.example.dcskeyboardhelper.ui.dialog;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dcskeyboardhelper.R;
 import com.example.dcskeyboardhelper.base.BaseDialog;
+import com.example.dcskeyboardhelper.base.BaseDialogFragment;
 import com.example.dcskeyboardhelper.databinding.DialogInsertActionModuleBinding;
 import com.example.dcskeyboardhelper.model.Constant;
 import com.example.dcskeyboardhelper.model.adapter.KeyboardActionsAdapter;
@@ -20,18 +22,17 @@ import com.example.dcskeyboardhelper.viewModel.ModuleDebugViewModel;
 import java.util.Objects;
 
 //添加按键的dialog
-public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBinding> implements View.OnClickListener{
-    private final ModuleDebugViewModel viewModel;
+public class ModuleInsertDialog extends BaseDialogFragment<DialogInsertActionModuleBinding, ModuleDebugViewModel>
+        implements View.OnClickListener{
     private KeyboardActionsAdapter adapter;
     private ActionModule module;
-    public ModuleInsertDialog(@NonNull Context context, ModuleDebugViewModel viewModel) {
-        super(context);
-        this.viewModel = viewModel;
+
+    public ModuleInsertDialog(ModuleDebugViewModel viewModel) {
+        super(viewModel);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initParams() {
         binding.btnInsertCancel.setOnClickListener(this);
         binding.btnInsertConfirm.setOnClickListener(this);
 
@@ -43,8 +44,18 @@ public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBindi
     }
 
     @Override
+    protected void setDismissCountdown() {
+
+    }
+
+    @Override
     protected int getLayoutRes() {
         return R.layout.dialog_insert_action_module;
+    }
+
+    @Override
+    protected Dialog setCustomDialogStyle() {
+        return null;
     }
 
     @Override
@@ -80,13 +91,13 @@ public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBindi
             //检查pageId和profileId有无错误
             long pageId = Constant.CURRENT_PAGE_ID;
             if (pageId == -1){
-                Toast.makeText(getContext(), getContext().getString(R.string.page_index_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.page_index_error, Toast.LENGTH_SHORT).show();
                 dismiss();
                 return;
             }
             long profileId = Constant.CURRENT_PROFILE_ID;
             if (profileId == -1){
-                Toast.makeText(getContext(), getContext().getString(R.string.profile_index_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.profile_index_error, Toast.LENGTH_SHORT).show();
                 dismiss();
                 return;
             }
@@ -94,7 +105,7 @@ public class ModuleInsertDialog extends BaseDialog<DialogInsertActionModuleBindi
             //添加操作见OperatePageDebugFragment的onModuleInserted重写方法
             module = new ActionModule(title, desc,  stepSum, defaultStep, switchMode,
                     adapter.getActions(), isStarred, pageId, profileId, 0);//gridPosition在上面提到的重写方法里设置
-            Toast.makeText(getContext(), getContext().getString(R.string.operate_success), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.operate_success, Toast.LENGTH_SHORT).show();
             dismiss();
         }
     }

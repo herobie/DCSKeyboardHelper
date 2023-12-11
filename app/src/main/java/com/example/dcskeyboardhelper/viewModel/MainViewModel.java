@@ -53,8 +53,8 @@ public class MainViewModel extends BaseViewModel {
     public void createConnection() {
         if (client == null){
             client = Client.getInstance(connectionStatus);
-            client.setNetworkAttr(serverIP, port);
         }
+        client.setNetworkAttr(serverIP, port);
         client.init();
     }
 

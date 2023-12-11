@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 
 public class BaseJson<T> {
     @Expose
-    private int code;
+    private int errorCode;
     @Expose
     private String errorMsg;
     @Expose
@@ -23,12 +23,12 @@ public class BaseJson<T> {
         errorMsg = "";
     }
 
-    public int getCode() {
-        return code;
+    public int getErrorCode() {
+        return errorCode;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
     }
 
     public String getErrorMsg() {

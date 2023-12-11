@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dcskeyboardhelper.R;
@@ -26,10 +27,15 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
     private List<ActionModule> modules;
     private final Context context;
     private OnModuleChangeListener onModuleChangeListener;
+    private FragmentManager fragmentManager;
 
     public DebugButtonAdapter(OperatePageViewModel viewModel, Context context) {
         super(viewModel);
         this.context = context;
+    }
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
     }
 
     public void setModules(List<ActionModule> modules) {
@@ -53,7 +59,7 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
         });
 
         binding.ibSetting.setOnClickListener(v -> {
-            ModuleUpdateDialog updateDialog = new ModuleUpdateDialog(context, viewModel,
+            ModuleUpdateDialog updateDialog = new ModuleUpdateDialog(viewModel,
                     modules.get(holder.getAdapterPosition()));
             updateDialog.setOnDismissListener(dialog -> {
                 if (updateDialog.isUpdate()){
@@ -61,7 +67,7 @@ public class DebugButtonAdapter extends BaseAdapter<ItemActionButtonBinding, Ope
                     notifyItemChanged(holder.getAdapterPosition());
                 }
             });
-            updateDialog.show();
+            updateDialog.show(fragmentManager, "updateDialog");
         });
 
         binding.ibRemove.setOnClickListener(v -> {

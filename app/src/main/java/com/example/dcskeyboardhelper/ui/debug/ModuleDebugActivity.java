@@ -131,7 +131,7 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                 insertWindow.setOnItemClickListener((parent, view1, position, id) -> {
                     if (position == 0){
                         ModuleInsertDialog moduleInsertDialog
-                                = new ModuleInsertDialog(ModuleDebugActivity.this, viewModel);
+                                = new ModuleInsertDialog(viewModel);
                         moduleInsertDialog.setOnDismissListener(dialog -> {
 
                             ActionModule module = moduleInsertDialog.getModule();
@@ -141,7 +141,7 @@ public class ModuleDebugActivity extends BaseActivity<ActivitySimulateBinding, M
                                         .get(position1).onModuleInserted(module, -1);
                             }
                         });
-                        moduleInsertDialog.show();
+                        moduleInsertDialog.show(getSupportFragmentManager(), "insert");
                     }else if (position == 1){
                         PageDialog pageDialog = new PageDialog(ModuleDebugActivity.this, viewModel);
                         pageDialog.setOnDismissListener(dialog -> {

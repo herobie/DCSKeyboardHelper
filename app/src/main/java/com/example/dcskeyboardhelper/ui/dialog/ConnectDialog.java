@@ -1,7 +1,11 @@
 package com.example.dcskeyboardhelper.ui.dialog;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.example.dcskeyboardhelper.R;
@@ -19,6 +23,21 @@ public class ConnectDialog extends BaseDialogFragment<DialogConnectionBinding, M
 
     @Override
     protected void initParams() {
+        binding.cbDefaultConfig.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isPressed() && isChecked){
+                    SharedPreferences sharedPreferences= requireContext().getSharedPreferences("ipConfig", MODE_PRIVATE);
+                    String ip =sharedPreferences.getString("ip","");
+                    int port = sharedPreferences.getInt("port",0);
+                    if (ip != null){
+                        Objects.requireNonNull(binding.edServerIp.getEditText()).setText(ip);
+                    }
+                    Objects.requireNonNull(binding.edPort.getEditText()).setText(String.valueOf(port));
+                }
+            }
+        });
+
         binding.btnConnectCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -37,11 +56,19 @@ public class ConnectDialog extends BaseDialogFragment<DialogConnectionBinding, M
                     Toast.makeText(getContext(), R.string.require_port, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (binding.cbDefaultConfig.isChecked()){
-                    viewModel.getClient().useDefaultConfig();
-                }else {
-                    viewModel.setServerIP(serverIp);
-                    viewModel.setPort(port);
+                viewModel.setServerIP(serverIp);
+                viewModel.setPort(port);
+                //如果勾选了设置为默认ip设置，则使用SharedPreference进行保存
+                if (binding.cbSetConfig.isChecked()){
+                    //获取SharedPreferences对象
+                    SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ipConfig",MODE_PRIVATE);
+                    //获取Editor对象的引用
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    //将获取过来的值放入文件
+                    editor.putString("ip", serverIp);
+                    editor.putInt("port", port);
+                    // 提交数据
+                    editor.apply();
                 }
                 viewModel.createConnection();
                 Toast.makeText(getContext(), R.string.operate_success, Toast.LENGTH_SHORT).show();

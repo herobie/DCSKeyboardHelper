@@ -7,6 +7,7 @@
     <string name="pages_skip">页面跳转</string>
     <string name="disconnect">断开连接</string>
     <string name="use_default_ip_config">使用默认ip设置</string>
+    <string name="set_default_ip_config">设置为默认ip设置</string>
 
     <string name="device_no_connect">服务端未连接</string>
     <string name="device_connected">服务端已连接</string>

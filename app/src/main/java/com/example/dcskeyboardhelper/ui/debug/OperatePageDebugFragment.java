@@ -41,6 +41,7 @@ public class OperatePageDebugFragment extends BaseFragment<FragmentOperateBindin
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 5);
         binding.rvOperate.setLayoutManager(layoutManager);
         adapter = new DebugButtonAdapter(viewModel, getContext());
+        adapter.setFragmentManager(getParentFragmentManager());
         adapter.setOnModuleChangeListener(this);
         binding.rvOperate.setAdapter(adapter);
 
